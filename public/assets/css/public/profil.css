@@ -1,0 +1,209 @@
+:root {
+    --primary-color: #00712D;
+    --secondary-color: #FF9100;
+    --thrid-color: #FFFBE6;
+    --fourth-color: #D5ED9F;
+}
+
+/* ================================
+   PROFILE PAGE
+   ================================ */
+.profil .section-pimpinan {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    background-color: var(--light-gray);
+    padding: 3rem 0;
+    margin-top: 80px;
+}
+
+.profil .section-pimpinan .image-container img {
+    width: 100%;
+    max-width: 350px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(17, 101, 48, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.profil .section-pimpinan .image-container img:hover {
+    transform: scale(1.02);
+}
+
+.profil .nama-pimpinan {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 16px;
+    text-align: center;
+    max-width: 350px;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(17, 101, 48, 0.1);
+}
+
+.profil .text-container {
+    max-width: 600px;
+    padding: 20px;
+}
+
+.profil .text-container h3 {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.profil .text-container p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #555;
+    font-weight: 400;
+}
+
+.profil .section-pimpinan .image-container {
+    flex: 0 0 300px;
+    margin-right: 2rem;
+}
+
+.profil .section-pimpinan img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.profil .section-pimpinan img:hover {
+    transform: translateY(-5px);
+}
+
+.profil .section-pimpinan .text-container {
+    flex: 1;
+    max-width: 600px;
+}
+
+.profil .section-pimpinan .nama-pimpinan {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 500;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profil .section-pimpinan h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.profil .section-pimpinan p {
+    color: #444;
+    line-height: 1.8;
+    text-align: justify;
+}
+
+.profil .text-justify {
+    text-align: justify;
+}
+
+/* Visi Misi Section */
+.profil .visi-misi-section {
+    background-color: var(--light-gray);
+    padding: 4rem 0;
+}
+
+.profil .visi-misi-card {
+    background-color: var(--white);
+    border-radius: 15px;
+    padding: 2rem;
+    height: 100%;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.profil .visi-misi-card:hover {
+    transform: translateY(-5px);
+}
+
+.profil .visi-misi-card h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.profil .visi-misi-card ul {
+    padding-left: 1.2rem;
+}
+
+.profil .visi-misi-card li {
+    margin-bottom: 0.5rem;
+    color: #444;
+    line-height: 1.6;
+}
+
+/* Timeline Section */
+.profil .timeline-section {
+    padding: 4rem 0;
+    background-color: var(--white);
+}
+
+.profil .timeline {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.profil .timeline::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background-color: var(--primary-color);
+}
+
+.profil .timeline-item {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.profil .timeline-content {
+    background-color: var(--white);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    width: calc(50% - 30px);
+    position: relative;
+}
+
+.profil .timeline-content::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    width: 20px;
+    height: 20px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+}
+
+.profil .timeline-item:nth-child(odd) .timeline-content {
+    margin-left: auto;
+}
+
+.profil .timeline-item:nth-child(odd) .timeline-content::before {
+    left: -40px;
+}
+
+.profil .timeline-item:nth-child(even) .timeline-content::before {
+    right: -40px;
+}
+
+.profil .timeline-year {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}

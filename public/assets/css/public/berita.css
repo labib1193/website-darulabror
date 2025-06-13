@@ -1,0 +1,66 @@
+:root {
+    --primary-color: #00712D;
+    --secondary-color: #FF9100;
+    --thrid-color: #FFFBE6;
+    --fourth-color: #D5ED9F;
+}
+
+/* ================================
+   BERITA PAGE STYLES
+   ================================ */
+.berita .hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #004d1f 100%);
+    padding: 80px 0;
+}
+
+.berita .search-box {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.berita .category-nav .btn-outline-primary {
+    border-radius: 20px;
+    padding: 8px 20px;
+}
+
+.berita .category-nav .btn-outline-primary.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.berita .featured-news .card {
+    transition: transform 0.3s ease;
+}
+
+.berita .featured-news .card:hover {
+    transform: translateY(-5px);
+}
+
+.berita .featured-news .card-img-top {
+    height: 300px;
+    object-fit: cover;
+}
+
+.berita .latest-news .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.berita .badge {
+    padding: 6px 12px;
+    font-weight: 500;
+}
+
+.berita .newsletter-section {
+    background-color: var(--light-gray);
+}
+
+.berita .pagination .page-link {
+    color: var(--primary-color);
+    padding: 10px 20px;
+}
+
+.berita .pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}

@@ -1,0 +1,88 @@
+:root {
+    --primary-color: #00712D;
+    --secondary-color: #FF9100;
+    --thrid-color: #FFFBE6;
+    --fourth-color: #D5ED9F;
+}
+
+/* ================================
+   NAVBAR
+   ================================ */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1050;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #116530 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.navbar-fixed {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    background-color: var(--primary-color);
+}
+
+.navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: var(--white) !important;
+}
+
+.logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.navbar .navbar-nav .nav-link {
+    font-weight: 500;
+    padding-left: 15px;
+    padding-right: 15px;
+    position: relative;
+    color: var(--white) !important;
+    transition: all 0.3s ease;
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link:focus {
+    color: var(--secondary-color) !important;
+}
+
+.navbar .navbar-nav .nav-link.active {
+    color: var(--secondary-color) !important;
+    font-weight: bold;
+}
+
+.navbar .navbar-nav .nav-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 2px;
+    background-color: var(--secondary-color);
+}
+
+.nav-link {
+    transition: color 0.3s ease;
+}
+
+.nav-link.active {
+    color: var(--primary-color) !important;
+    font-weight: bold !important;
+}
+
+.nav-link:hover:not(.active) {
+    color: var(--secondary-color) !important;
+}
