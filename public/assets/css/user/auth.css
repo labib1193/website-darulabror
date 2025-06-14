@@ -1,0 +1,80 @@
+/* Custom styles for authentication pages */
+.login-page, .register-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 100vh;
+}
+
+.login-box {
+    width: 400px;
+    margin: 7% auto;
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.login-logo img {
+    border-radius: 50%;
+    border: 3px solid white;
+    padding: 5px;
+    background: white;
+}
+
+.card {
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    border: none;
+    border-radius: 10px;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.login-box-msg {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #666;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group-text {
+    background: #f8f9fa;
+    border-color: #ced4da;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.btn-outline-secondary {
+    border-radius: 5px;
+    border-color: #6c757d;
+}
+
+/* Hide any sidebar elements that might appear */
+.main-sidebar,
+.sidebar-dark-primary,
+aside {
+    display: none !important;
+}
+
+/* Ensure full width for auth pages */
+body.login-page,
+body.register-page {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}

@@ -22,7 +22,7 @@
         {{-- Header --}}
 
         <!-- Navbar  -->
-        @include('partials.navbar')
+        @include('partials.public.navbar')
         <!-- Navbar -->
 
         <!-- Konten Halaman -->
@@ -32,7 +32,7 @@
         <!-- Konten Halaman -->
 
         <!-- Footer -->
-        @include('partials.footer')
+        @include('partials.public.footer')
         <!-- Footer -->
     </div>
 

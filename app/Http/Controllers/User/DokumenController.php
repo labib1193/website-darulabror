@@ -8,6 +8,6 @@ class DokumenController extends Controller
 {
     public function index()
     {
-        return view('user.berkas');
+        return view('user.dokumen');
     }
 }
