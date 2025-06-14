@@ -11,7 +11,7 @@
                 <p class="mb-4">Tahun Ajaran 1446/1447 H atau 2025/2026 M</p>
                 <p>Silahkan <strong>KLIK</strong> tombol <strong>“DAFTAR”</strong> dibawah ini untuk pendaftaran santri baru secara online</p>
 
-                <a href="asset {{ route('user.login') }}" class="btn btn-warning fw-bold px-4 py-2 mt-3">DAFTAR</a>
+                <a href="{{ route('user.auth.register') }}" target="_blank" class="btn btn-warning fw-bold px-4 py-2 mt-3">DAFTAR</a>
             </div>
             <div class="row justify-content-center">
                 <div class="col-md-6">
