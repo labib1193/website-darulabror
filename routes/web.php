@@ -3,12 +3,12 @@
 use Illuminate\Support\Facades\Route;
 
 // ✅ Prefix untuk route admin
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('web')->group(function () {
     require __DIR__ . '/admin.php';
 });
 
 // ✅ Prefix untuk route user
-Route::prefix('user')->group(function () {
+Route::prefix('user')->middleware('web')->group(function () {
     require __DIR__ . '/user.php';
 });
 

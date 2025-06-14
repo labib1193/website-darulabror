@@ -14,7 +14,7 @@
                 </div>
 
                 {{-- Form Login --}}
-                <form method=" POST" action="{{ route('user.auth.login') }}" class="login-form">
+                <form method="POST" action="{{ route('user.auth.login') }}" class="login-form">
                     @csrf
 
                     @if ($errors->any())
