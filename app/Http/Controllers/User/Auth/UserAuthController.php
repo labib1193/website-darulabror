@@ -97,7 +97,6 @@ class UserAuthController extends Controller
             ])->withInput();
         }
     }
-
     /**
      * Proses logout
      */
@@ -108,6 +107,6 @@ class UserAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('user.auth.login')->with('success', 'Anda telah berhasil logout.');
     }
 }

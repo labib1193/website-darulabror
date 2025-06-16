@@ -34,10 +34,10 @@
                 <form action="{{ route('user.pengaturanakun.profile') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="nama">Nama Lengkap</label>
-                        <input type="text" class="form-control @error('nama') is-invalid @enderror"
-                            id="nama" name="nama" value="{{ old('nama', $user->name) }}" required>
-                        @error('nama')
+                        <label for="name">Nama Lengkap</label>
+                        <input type="text" class="form-control @error('name') is-invalid @enderror"
+                            id="name" name="name" value="{{ old('name', $user->name) }}" required>
+                        @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -53,11 +53,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="telepon">No. Telepon</label>
-                        <input type="tel" class="form-control @error('telepon') is-invalid @enderror"
-                            id="telepon" name="telepon" value="{{ old('telepon', $identitas->no_hp_1 ?? '') }}"
+                        <label for="no_hp_1">No. Telepon</label>
+                        <input type="tel" class="form-control @error('no_hp_1') is-invalid @enderror"
+                            id="no_hp_1" name="no_hp_1" value="{{ old('no_hp_1', $identitas->no_hp_1 ?? '') }}"
                             placeholder="08xxxxxxxxxx">
-                        @error('telepon')
+                        @error('no_hp_1')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -80,28 +80,28 @@
                 <form action="{{ route('user.pengaturanakun.password') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="password_lama">Password Lama</label>
-                        <input type="password" class="form-control @error('password_lama') is-invalid @enderror"
-                            id="password_lama" name="password_lama" required>
-                        @error('password_lama')
+                        <label for="current_password">Password Lama</label>
+                        <input type="password" class="form-control @error('current_password') is-invalid @enderror"
+                            id="current_password" name="current_password" required>
+                        @error('current_password')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="password_baru">Password Baru</label>
-                        <input type="password" class="form-control @error('password_baru') is-invalid @enderror"
-                            id="password_baru" name="password_baru" required>
-                        <small class="form-text text-muted">Minimal 6 karakter</small>
-                        @error('password_baru')
+                        <label for="password">Password Baru</label>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                            id="password" name="password" required>
+                        <small class="form-text text-muted">Minimal 8 karakter</small>
+                        @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="form-group">
-                        <label for="password_baru_confirmation">Konfirmasi Password Baru</label>
-                        <input type="password" class="form-control" id="password_baru_confirmation"
-                            name="password_baru_confirmation" required>
+                        <label for="password_confirmation">Konfirmasi Password Baru</label>
+                        <input type="password" class="form-control" id="password_confirmation"
+                            name="password_confirmation" required>
                     </div>
 
                     <button type="submit" class="btn btn-warning">
@@ -140,18 +140,20 @@
                         @endif
                     </small>
                 </div>
-                @endif <form action="{{ route('user.pengaturanakun.photo') }}" method="POST" enctype="multipart/form-data">
+                @endif
+
+                <form action="{{ route('user.pengaturanakun.photo') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input @error('foto_profil') is-invalid @enderror"
-                                    id="foto_profil" name="foto_profil" accept="image/*" required>
-                                <label class="custom-file-label" for="foto_profil">Pilih foto...</label>
+                                <input type="file" class="custom-file-input @error('profile_photo') is-invalid @enderror"
+                                    id="profile_photo" name="profile_photo" accept="image/*" required>
+                                <label class="custom-file-label" for="profile_photo">Pilih foto...</label>
                             </div>
                         </div>
-                        <small class="form-text text-muted">Format: JPG, PNG, JPEG. Maksimal 1MB</small>
-                        @error('foto_profil')
+                        <small class="form-text text-muted">Format: JPG, PNG, JPEG. Maksimal 2MB</small>
+                        @error('profile_photo')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
@@ -253,8 +255,10 @@
         $('.custom-file-input').on('change', function() {
             let fileName = $(this).val().split('\\').pop();
             $(this).next('.custom-file-label').addClass("selected").html(fileName);
-        }); // Preview foto profil
-        $('#foto_profil').change(function() {
+        });
+
+        // Preview foto profil
+        $('#profile_photo').change(function() {
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function(e) {

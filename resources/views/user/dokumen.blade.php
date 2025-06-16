@@ -3,142 +3,456 @@
 @section('title', 'Dokumen - Dashboard Santri')
 @section('page-title', 'Upload Dokumen')
 
-@section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('user.identitas') }}">Identitas Diri</a></li>
-<li class="breadcrumb-item active">Dokumen</li>
-@endsection
-
 @section('content')
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Dokumen Persyaratan</h3>
+    <!-- Progress Overview -->
+    <div class="col-12 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-primary">
+                <i class="fas fa-file-upload"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Progress Upload Dokumen</span>
+                <span class="info-box-number">{{ $dokumen ? $dokumen->getCompletionPercentage() : 0 }}%</span>
+                <div class="progress">
+                    @php
+                    $progressPercentage = $dokumen ? $dokumen->getCompletionPercentage() : 0;
+                    @endphp
+                    <div class="progress-bar bg-primary" data-width="{{ $progressPercentage }}"></div>
+                </div>
+                <span class="progress-description">{{ $dokumen ? array_sum([
+                    !empty($dokumen->foto_ktp) ? 1 : 0,
+                    !empty($dokumen->foto_ijazah) ? 1 : 0,
+                    !empty($dokumen->surat_sehat) ? 1 : 0,
+                    !empty($dokumen->foto_kk) ? 1 : 0,
+                    !empty($dokumen->pas_foto) ? 1 : 0
+                ]) : 0 }} dari 5 dokumen selesai</span>
             </div>
-            <div class="card-body">
-                <p class="text-muted">Silakan upload dokumen-dokumen yang diperlukan untuk pendaftaran santri baru.</p>
+        </div>
+    </div>
 
-                <form enctype="multipart/form-data">
+    <!-- Status Alert -->
+    <div class="col-12 mb-3">
+        @if($dokumen && $dokumen->isComplete())
+        <div class="callout callout-success">
+            <h5><i class="fas fa-check"></i> Dokumen Lengkap!</h5>
+            <p>Semua dokumen telah terupload. Status verifikasi:
+                <span class="badge badge-{{ $dokumen->status_verifikasi == 'approved' ? 'success' : ($dokumen->status_verifikasi == 'rejected' ? 'danger' : 'warning') }}">
+                    {{ ucfirst($dokumen->status_verifikasi) }}
+                </span>
+            </p>
+        </div>
+        @else
+        <div class="callout callout-info">
+            <h5><i class="fas fa-info"></i> Upload Dokumen</h5>
+            <p>Upload semua dokumen yang diperlukan untuk melengkapi persyaratan pendaftaran santri baru.</p>
+        </div>
+        @endif
+    </div>
+
+    <!-- Alert Messages -->
+    @if(session('success'))
+    <div class="col-12">
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <i class="icon fas fa-check"></i> {{ session('success') }}
+        </div>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="col-12">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <i class="icon fas fa-ban"></i> {{ session('error') }}
+        </div>
+    </div>
+    @endif
+
+    @if(session('warning'))
+    <div class="col-12">
+        <div class="alert alert-warning alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <i class="icon fas fa-exclamation-triangle"></i> {{ session('warning') }}
+        </div>
+    </div>
+    @endif
+
+    @if($errors->any())
+    <div class="col-12">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h6><i class="icon fas fa-ban"></i> Terdapat kesalahan:</h6>
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+    @endif <!-- Upload Form -->
+    <div class="col-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-upload"></i> Upload Dokumen Persyaratan</h3>
+            </div>
+            <form action="{{ route('user.dokumen.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="ktp">Foto KTP Orangtua <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="ktp" name="ktp" accept="image/*">
-                                        <label class="custom-file-label" for="ktp">Pilih file...</label>
+                        <!-- Foto KTP -->
+                        <div class="col-md-6 col-sm-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-id-card"></i> Foto KTP <span class="text-danger">*</span></h3>
+                                </div>
+                                <div class="card-body">
+                                    @if($dokumen && $dokumen->foto_ktp)
+                                    <div class="callout callout-success">
+                                        <div class="text-center mb-3">
+                                            <img src="{{ Storage::url($dokumen->foto_ktp) }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto KTP">
+                                        </div>
+                                        <p class="text-center mb-2">
+                                            <strong class="text-success">
+                                                <i class="fas fa-check-circle text-success"></i> {{ $dokumen->foto_ktp_original }}
+                                            </strong>
+                                        </p>
+                                        <p class="text-center text-muted small mb-3">
+                                            Ukuran: {{ $dokumen->getFormattedFileSize('foto_ktp') }} |
+                                            Upload: {{ $dokumen->foto_ktp_uploaded_at->format('d/m/Y H:i') }}
+                                        </p>
+                                        <div class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ route('user.dokumen.download', 'foto_ktp') }}" class="btn btn-primary">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="foto_ktp">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="foto_ktp" name="foto_ktp" accept="image/*">
+                                                <label class="custom-file-label" for="foto_ktp">
+                                                    {{ $dokumen && $dokumen->foto_ktp ? 'Ganti file...' : 'Pilih file...' }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">Format: JPG, PNG | Maksimal 2MB</small>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Format: JPG, PNG. Maksimal 2MB</small>
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="kk">Foto Kartu Keluarga <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="kk" name="kk" accept="image/*">
-                                        <label class="custom-file-label" for="kk">Pilih file...</label>
+                        <!-- Foto Kartu Keluarga -->
+                        <div class="col-md-6 col-sm-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-users"></i> Foto Kartu Keluarga <span class="text-danger">*</span></h3>
+                                </div>
+                                <div class="card-body">
+                                    @if($dokumen && $dokumen->foto_kk)
+                                    <div class="callout callout-success">
+                                        <div class="text-center mb-3">
+                                            <img src="{{ Storage::url($dokumen->foto_kk) }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto KK">
+                                        </div>
+                                        <p class="text-center mb-2">
+                                            <strong class="text-success">
+                                                <i class="fas fa-check-circle"></i> {{ $dokumen->foto_kk_original }}
+                                            </strong>
+                                        </p>
+                                        <p class="text-center text-muted small mb-3">
+                                            Ukuran: {{ $dokumen->getFormattedFileSize('foto_kk') }} |
+                                            Upload: {{ $dokumen->foto_kk_uploaded_at->format('d/m/Y H:i') }}
+                                        </p>
+                                        <div class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ route('user.dokumen.download', 'foto_kk') }}" class="btn btn-primary">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="foto_kk">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="foto_kk" name="foto_kk" accept="image/*">
+                                                <label class="custom-file-label" for="foto_kk">
+                                                    {{ $dokumen && $dokumen->foto_kk ? 'Ganti file...' : 'Pilih file...' }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">Format: JPG, PNG | Maksimal 2MB</small>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Format: JPG, PNG. Maksimal 2MB</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Foto Ijazah -->
+                        <div class="col-md-6 col-sm-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-graduation-cap"></i> Foto Ijazah Terakhir</h3>
+                                </div>
+                                <div class="card-body">
+                                    @if($dokumen && $dokumen->foto_ijazah)
+                                    <div class="callout callout-success">
+                                        <div class="text-center mb-3">
+                                            <img src="{{ Storage::url($dokumen->foto_ijazah) }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto Ijazah">
+                                        </div>
+                                        <p class="text-center mb-2">
+                                            <strong class="text-success">
+                                                <i class="fas fa-check-circle"></i> {{ $dokumen->foto_ijazah_original }}
+                                            </strong>
+                                        </p>
+                                        <p class="text-center text-muted small mb-3">
+                                            Ukuran: {{ $dokumen->getFormattedFileSize('foto_ijazah') }} |
+                                            Upload: {{ $dokumen->foto_ijazah_uploaded_at->format('d/m/Y H:i') }}
+                                        </p>
+                                        <div class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ route('user.dokumen.download', 'foto_ijazah') }}" class="btn btn-primary">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="foto_ijazah">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="foto_ijazah" name="foto_ijazah" accept="image/*">
+                                                <label class="custom-file-label" for="foto_ijazah">
+                                                    {{ $dokumen && $dokumen->foto_ijazah ? 'Ganti file...' : 'Pilih file...' }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">Format: JPG, PNG | Maksimal 2MB</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pas Foto -->
+                        <div class="col-md-6 col-sm-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-camera"></i> Pas Foto 3x4 <span class="text-danger">*</span></h3>
+                                </div>
+                                <div class="card-body">
+                                    @if($dokumen && $dokumen->pas_foto)
+                                    <div class="callout callout-success">
+                                        <div class="text-center mb-3">
+                                            <img src="{{ Storage::url($dokumen->pas_foto) }}" class="img-thumbnail" style="max-height: 100px;" alt="Pas Foto">
+                                        </div>
+                                        <p class="text-center mb-2">
+                                            <strong class="text-success">
+                                                <i class="fas fa-check-circle"></i> {{ $dokumen->pas_foto_original }}
+                                            </strong>
+                                        </p>
+                                        <p class="text-center text-muted small mb-3">
+                                            Ukuran: {{ $dokumen->getFormattedFileSize('pas_foto') }} |
+                                            Upload: {{ $dokumen->pas_foto_uploaded_at->format('d/m/Y H:i') }}
+                                        </p>
+                                        <div class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ route('user.dokumen.download', 'pas_foto') }}" class="btn btn-primary">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="pas_foto">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="pas_foto" name="pas_foto" accept="image/*">
+                                                <label class="custom-file-label" for="pas_foto">
+                                                    {{ $dokumen && $dokumen->pas_foto ? 'Ganti file...' : 'Pilih file...' }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">Format: JPG, PNG | Maksimal 1MB</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="ijazah">Foto Ijazah Terakhir</label>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="ijazah" name="ijazah" accept="image/*">
-                                        <label class="custom-file-label" for="ijazah">Pilih file...</label>
+                        <!-- Surat Keterangan Sehat -->
+                        <div class="col-md-6 col-sm-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-file-medical"></i> Surat Keterangan Sehat</h3>
+                                </div>
+                                <div class="card-body">
+                                    @if($dokumen && $dokumen->surat_sehat)
+                                    <div class="callout callout-success">
+                                        <div class="text-center mb-3">
+                                            @if(Str::endsWith($dokumen->surat_sehat, '.pdf'))
+                                            <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
+                                            @else
+                                            <img src="{{ Storage::url($dokumen->surat_sehat) }}" class="img-thumbnail" style="max-height: 100px;" alt="Surat Sehat">
+                                            @endif
+                                        </div>
+                                        <p class="text-center mb-2">
+                                            <strong class="text-success">
+                                                <i class="fas fa-check-circle"></i> {{ $dokumen->surat_sehat_original }}
+                                            </strong>
+                                        </p>
+                                        <p class="text-center text-muted small mb-3">
+                                            Ukuran: {{ $dokumen->getFormattedFileSize('surat_sehat') }} |
+                                            Upload: {{ $dokumen->surat_sehat_uploaded_at->format('d/m/Y H:i') }}
+                                        </p>
+                                        <div class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ route('user.dokumen.download', 'surat_sehat') }}" class="btn btn-primary">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="surat_sehat">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="surat_sehat" name="surat_sehat" accept="image/*,application/pdf">
+                                                <label class="custom-file-label" for="surat_sehat">
+                                                    {{ $dokumen && $dokumen->surat_sehat ? 'Ganti file...' : 'Pilih file...' }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">Format: JPG, PNG, PDF | Maksimal 2MB</small>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Format: JPG, PNG. Maksimal 2MB</small>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="pas_foto">Pas Foto 3x4 <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="pas_foto" name="pas_foto" accept="image/*">
-                                        <label class="custom-file-label" for="pas_foto">Pilih file...</label>
-                                    </div>
-                                </div>
-                                <small class="form-text text-muted">Format: JPG, PNG. Maksimal 1MB</small>
                             </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="surat_keterangan">Surat Keterangan Sehat</label>
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="surat_keterangan" name="surat_keterangan" accept="image/*,application/pdf">
-                                        <label class="custom-file-label" for="surat_keterangan">Pilih file...</label>
-                                    </div>
-                                </div>
-                                <small class="form-text text-muted">Format: JPG, PNG, PDF. Maksimal 2MB</small>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-upload"></i> Upload Dokumen
+                            </button>
+                            <button type="reset" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-undo"></i> Reset
                             </button>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <!-- Status Upload -->
-        <div class="card mt-3">
+    <!-- Status Dokumen Table -->
+    <div class="col-12">
+        <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Status Upload Dokumen</h3>
+                <h3 class="card-title"><i class="fas fa-list"></i> Status Upload Dokumen</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>Nama Dokumen</th>
                                 <th>Status</th>
+                                <th>Ukuran File</th>
                                 <th>Tanggal Upload</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                            $documents = [
+                            ['field' => 'foto_ktp', 'name' => 'Foto KTP', 'required' => true],
+                            ['field' => 'foto_kk', 'name' => 'Foto Kartu Keluarga', 'required' => true],
+                            ['field' => 'foto_ijazah', 'name' => 'Foto Ijazah Terakhir', 'required' => false],
+                            ['field' => 'pas_foto', 'name' => 'Pas Foto 3x4', 'required' => true],
+                            ['field' => 'surat_sehat', 'name' => 'Surat Keterangan Sehat', 'required' => false],
+                            ];
+                            @endphp
+
+                            @foreach($documents as $doc)
                             <tr>
-                                <td>KTP Orangtua</td>
-                                <td><span class="badge badge-warning">Belum Upload</span></td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td>
+                                    <strong>{{ $doc['name'] }}</strong>
+                                    @if($doc['required'])
+                                    <span class="text-danger">*</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($dokumen && $dokumen->{$doc['field']})
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-check"></i> Terupload
+                                    </span>
+                                    @else
+                                    <span class="badge badge-warning">
+                                        <i class="fas fa-clock"></i> Belum Upload
+                                    </span>
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ $dokumen && $dokumen->{$doc['field']} ? $dokumen->getFormattedFileSize($doc['field']) : '-' }}
+                                </td>
+                                <td>
+                                    {{ $dokumen && $dokumen->{$doc['field'] . '_uploaded_at'} ? $dokumen->{$doc['field'] . '_uploaded_at'}->format('d/m/Y H:i') : '-' }}
+                                </td>
+                                <td>
+                                    @if($dokumen && $dokumen->{$doc['field']}) <div class="btn-group btn-group-sm">
+                                        <a href="{{ route('user.dokumen.download', $doc['field']) }}" class="btn btn-primary">
+                                            <i class="fas fa-download"></i>
+                                        </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="{{ $doc['field'] }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    @else
+                                    <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                             </tr>
-                            <tr>
-                                <td>Kartu Keluarga</td>
-                                <td><span class="badge badge-warning">Belum Upload</span></td>
-                                <td>-</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td>Pas Foto 3x4</td>
-                                <td><span class="badge badge-warning">Belum Upload</span></td>
-                                <td>-</td>
-                                <td>-</td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus dokumen ini?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
             </div>
         </div>
     </div>
@@ -148,11 +462,45 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
+        // Set progress bar width from data attribute
+        $('.progress-bar[data-width]').each(function() {
+            const width = $(this).data('width') + '%';
+            $(this).css('width', width);
+        });
+
+        // Handle delete document button clicks
+        $(document).on('click', '.delete-document-btn', function() {
+            const field = $(this).data('field');
+            deleteDocument(field);
+        });
+
         // Update label saat file dipilih
         $('.custom-file-input').on('change', function() {
             let fileName = $(this).val().split('\\').pop();
-            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            if (fileName) {
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            }
+        });
+
+        // File size validation
+        $('.custom-file-input').on('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const maxSize = $(this).attr('id') === 'pas_foto' ? 1024 * 1024 : 2048 * 1024; // 1MB for pas_foto, 2MB for others
+
+                if (file.size > maxSize) {
+                    alert('Ukuran file terlalu besar! Maksimal ' + (maxSize / (1024 * 1024)) + 'MB');
+                    $(this).val('');
+                    $(this).next('.custom-file-label').removeClass("selected").html('Pilih file...');
+                }
+            }
         });
     });
+
+    function deleteDocument(field) {
+        const deleteForm = document.getElementById('deleteForm');
+        deleteForm.action = '{{ route("user.dokumen.delete", ":field") }}'.replace(':field', field);
+        $('#deleteModal').modal('show');
+    }
 </script>
 @endpush

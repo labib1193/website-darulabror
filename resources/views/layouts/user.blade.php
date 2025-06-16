@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -15,8 +16,6 @@
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- AdminLTE -->
     <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css') }}">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/user/main.css') }}">
 
     @stack('styles')
 </head>
@@ -36,10 +35,18 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
+                        @if(Auth::check() && Auth::user()->getProfilePhotoUrl())
+                        <img src="{{ Auth::user()->getProfilePhotoUrl() }}" class="img-circle" alt="User Image" style="width: 25px; height: 25px; margin-right: 5px;">
+                        @else
                         <i class="far fa-user"></i>
-                        {{ Auth::check() && Auth::user() ? Auth::user()->name : 'User' }}
+                        @endif
+                        <!-- {{ Auth::check() && Auth::user() ? Auth::user()->name : 'User' }} -->
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <!-- <a href="{{ route('user.pengaturanakun') }}" class="dropdown-item">
+                            <i class="fas fa-user-cog mr-2"></i> Pengaturan Akun
+                        </a> -->
+                        <div class="dropdown-divider"></div>
                         <form method="POST" action="{{ route('user.auth.logout') }}">
                             @csrf
                             <button type="submit" class="dropdown-item">
@@ -60,13 +67,8 @@
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        <div class="col-sm-6">
+                        <div class="col-sm-12">
                             <h1 class="m-0">@yield('page-title', 'Dashboard')</h1>
-                        </div>
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                @yield('breadcrumb')
-                            </ol>
                         </div>
                     </div>
                 </div>
