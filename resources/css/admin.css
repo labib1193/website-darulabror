@@ -1,0 +1,91 @@
+/* Custom CSS untuk Admin Dashboard */
+
+.small-box {
+    border-radius: 8px;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+}
+
+.small-box .icon {
+    font-size: 70px;
+}
+
+.timeline .timeline-item {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    border-radius: 5px;
+}
+
+.users-list > li {
+    width: 25%;
+    float: left;
+    padding: 10px;
+    text-align: center;
+}
+
+.users-list > li > img {
+    border-radius: 50%;
+    max-width: 100%;
+    height: auto;
+}
+
+.users-list .users-list-name,
+.users-list .users-list-date {
+    display: block;
+}
+
+.users-list .users-list-name {
+    font-weight: 600;
+    color: #495057;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.users-list .users-list-date {
+    color: #999;
+    font-size: 12px;
+}
+
+/* Card customizations */
+.card {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+}
+
+.card-header {
+    border-bottom-color: rgba(0,0,0,.125);
+}
+
+/* Quick actions buttons */
+.btn-block {
+    margin-bottom: 5px;
+}
+
+/* Timeline customizations */
+.timeline > div > .timeline-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 0;
+    padding: 10px;
+}
+
+.timeline > div > .timeline-item > .time {
+    color: #999;
+    float: right;
+    padding: 10px;
+    font-size: 12px;
+}
+
+.timeline > div > .timeline-item > .timeline-header {
+    margin: 0;
+    color: #555;
+    border-bottom: 1px solid #f4f4f4;
+    padding: 0 0 10px 0;
+    font-size: 16px;
+    line-height: 1.1;
+}
+
+.timeline > div > .timeline-item > .timeline-body,
+.timeline > div > .timeline-item > .timeline-footer {
+    padding: 10px 0 0 0;
+}

@@ -192,7 +192,7 @@
                 <h1 class="fw-bold mb-3">PENDAFTARAN SANTRI BARU TELAH DIBUKA</h1>
                 <p class="mb-4">Tahun Ajaran 1446/1447 H atau 2025/2026 M</p>
                 <p>Silahkan <strong>KLIK</strong> tombol <strong>“DAFTAR”</strong> dibawah ini untuk pendaftaran santri baru secara online</p>
-                <a href="{{ route('user.auth.login') }}" target="_blank" class="btn fw-bold px-4 py-2 mt-3">DAFTAR</a>
+                <a href="{{ route('user.auth.register') }}" target="_blank" class="btn fw-bold px-4 py-2 mt-3">DAFTAR</a>
             </div>
         </div>
     </section>

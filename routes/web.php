@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 // ✅ Prefix untuk route admin
-Route::prefix('admin')->middleware('web')->group(function () {
+Route::prefix('admin')->name('admin.')->group(function () {
     require __DIR__ . '/admin.php';
 });
 
