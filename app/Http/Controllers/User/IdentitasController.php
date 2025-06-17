@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Identitas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class IdentitasController extends Controller
 {
@@ -25,20 +26,21 @@ class IdentitasController extends Controller
     {
         $request->validate([
             'no_kk' => 'nullable|string|max:20',
-            'nik' => 'nullable|string|max:20',
-            'tempat_lahir' => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'nik' => 'required|string|max:20|unique:identitas,nik,' . (Auth::user()->identitas->id ?? 'NULL'),
+            'tempat_lahir' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'anak_ke' => 'nullable|integer|min:1',
             'jumlah_saudara' => 'nullable|integer|min:0',
             'tinggal_bersama' => 'nullable|string|max:100',
             'pendidikan_terakhir' => 'nullable|string|max:100',
-            'no_hp_1' => 'nullable|string|max:20',
-            'no_hp_2' => 'nullable|string|max:20',
-            'provinsi' => 'nullable|string|max:100',
-            'kabupaten' => 'nullable|string|max:100',
-            'kecamatan' => 'nullable|string|max:100',
-            'alamat_lengkap' => 'nullable|string',
+            'pekerjaan' => 'nullable|string|max:100',
+            'no_hp' => 'required|string|max:20',
+            'provinsi' => 'required|string|max:100',
+            'kabupaten' => 'required|string|max:100',
+            'kecamatan' => 'required|string|max:100',
+            'desa' => 'required|string|max:100',
+            'alamat_lengkap' => 'required|string',
             'kode_pos' => 'nullable|string|max:10',
         ]);
 
@@ -49,7 +51,18 @@ class IdentitasController extends Controller
             $identitas->user_id = Auth::id();
         }
 
+        // Hitung usia otomatis berdasarkan tanggal lahir
+        $tanggal_lahir = Carbon::parse($request->tanggal_lahir);
+        $usia = (int) $tanggal_lahir->diffInYears(Carbon::now());
+
         $identitas->fill($request->all());
+        $identitas->usia = $usia;
+
+        // Set status verifikasi default jika data baru atau belum ada status
+        if (!$identitas->exists || empty($identitas->status_verifikasi)) {
+            $identitas->status_verifikasi = 'Belum Diverifikasi';
+        }
+
         $identitas->save();
 
         return redirect()->route('user.identitas')->with('success', 'Data identitas berhasil diperbarui!');

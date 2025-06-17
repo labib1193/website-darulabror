@@ -24,13 +24,18 @@ class Identitas extends Model
         'jumlah_saudara',
         'tinggal_bersama',
         'pendidikan_terakhir',
-        'no_hp_1',
-        'no_hp_2',
+        'pekerjaan',
+        'no_hp',
         'provinsi',
         'kabupaten',
         'kecamatan',
+        'desa',
         'alamat_lengkap',
         'kode_pos',
+        'status_verifikasi',
+        'catatan_admin',
+        'verified_at',
+        'verified_by',
     ];
 
     protected $casts = [
@@ -38,12 +43,19 @@ class Identitas extends Model
         'usia' => 'integer',
         'anak_ke' => 'integer',
         'jumlah_saudara' => 'integer',
+        'verified_at' => 'datetime',
     ];
 
     // Relationship ke User
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Relationship ke Admin yang memverifikasi
+    public function verifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 
     // Accessor untuk nama lengkap dari relasi user

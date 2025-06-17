@@ -23,15 +23,26 @@ class DokumenController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'foto_ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'foto_ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'surat_sehat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'foto_kk' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'pas_foto' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'foto_ktp' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'foto_ijazah' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'surat_sehat' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'foto_kk' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'pas_foto' => 'nullable|image|mimes:jpeg,jpg,png|max:1024',
             'status_verifikasi' => 'required|in:pending,approved,rejected',
+            'catatan_verifikasi' => 'nullable|string',
         ]);
 
-        $data = ['user_id' => $request->user_id, 'status_verifikasi' => $request->status_verifikasi];
+        // Check if user already has dokumen
+        $existingDokumen = Dokumen::where('user_id', $request->user_id)->first();
+        if ($existingDokumen) {
+            return redirect()->back()->with('error', 'User ini sudah memiliki data dokumen.');
+        }
+
+        $data = [
+            'user_id' => $request->user_id,
+            'status_verifikasi' => $request->status_verifikasi,
+            'catatan_verifikasi' => $request->catatan_verifikasi
+        ];
 
         // Handle file uploads
         $fileFields = ['foto_ktp', 'foto_ijazah', 'surat_sehat', 'foto_kk', 'pas_foto'];
@@ -39,8 +50,17 @@ class DokumenController extends Controller
         foreach ($fileFields as $field) {
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
-                $data[$field] = $file->store('dokumen', 'public');
-                $data[$field . '_original'] = $file->getClientOriginalName();
+
+                // Generate unique filename
+                $originalName = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                $filename = $field . '_' . $request->user_id . '_' . time() . '.' . $extension;
+
+                // Store file
+                $path = $file->storeAs('dokumen/' . $request->user_id, $filename, 'public');
+
+                $data[$field] = $path;
+                $data[$field . '_original'] = $originalName;
                 $data[$field . '_size'] = $file->getSize();
                 $data[$field . '_uploaded_at'] = now();
             }
@@ -63,11 +83,11 @@ class DokumenController extends Controller
     public function update(Request $request, Dokumen $dokumen)
     {
         $request->validate([
-            'foto_ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'foto_ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'surat_sehat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'foto_kk' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'pas_foto' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'foto_ktp' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'foto_ijazah' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'surat_sehat' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'foto_kk' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'pas_foto' => 'nullable|image|mimes:jpeg,jpg,png|max:1024',
             'status_verifikasi' => 'required|in:pending,approved,rejected',
             'catatan_verifikasi' => 'nullable|string',
         ]);
@@ -79,14 +99,23 @@ class DokumenController extends Controller
 
         foreach ($fileFields as $field) {
             if ($request->hasFile($field)) {
+                $file = $request->file($field);
+
                 // Delete old file if exists
-                if ($dokumen->$field) {
+                if ($dokumen->$field && Storage::disk('public')->exists($dokumen->$field)) {
                     Storage::disk('public')->delete($dokumen->$field);
                 }
 
-                $file = $request->file($field);
-                $data[$field] = $file->store('dokumen', 'public');
-                $data[$field . '_original'] = $file->getClientOriginalName();
+                // Generate unique filename
+                $originalName = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                $filename = $field . '_' . $dokumen->user_id . '_' . time() . '.' . $extension;
+
+                // Store file
+                $path = $file->storeAs('dokumen/' . $dokumen->user_id, $filename, 'public');
+
+                $data[$field] = $path;
+                $data[$field . '_original'] = $originalName;
                 $data[$field . '_size'] = $file->getSize();
                 $data[$field . '_uploaded_at'] = now();
             }
@@ -102,12 +131,38 @@ class DokumenController extends Controller
         $fileFields = ['foto_ktp', 'foto_ijazah', 'surat_sehat', 'foto_kk', 'pas_foto'];
 
         foreach ($fileFields as $field) {
-            if ($dokumen->$field) {
+            if ($dokumen->$field && Storage::disk('public')->exists($dokumen->$field)) {
                 Storage::disk('public')->delete($dokumen->$field);
             }
         }
 
         $dokumen->delete();
         return redirect()->route('admin.dokumen.index')->with('success', 'Dokumen berhasil dihapus.');
+    }
+
+    /**
+     * Download specific dokumen file
+     */
+    public function download(Dokumen $dokumen, $field)
+    {
+        $allowedFields = ['foto_ktp', 'foto_ijazah', 'surat_sehat', 'foto_kk', 'pas_foto'];
+
+        if (!in_array($field, $allowedFields)) {
+            return redirect()->back()->with('error', 'Field dokumen tidak valid.');
+        }
+
+        if (!$dokumen->$field) {
+            return redirect()->back()->with('error', 'File tidak ditemukan.');
+        }
+
+        $filePath = storage_path('app/public/' . $dokumen->$field);
+
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan di server.');
+        }
+
+        $originalName = $dokumen->{$field . '_original'} ?? 'dokumen.' . pathinfo($filePath, PATHINFO_EXTENSION);
+
+        return response()->download($filePath, $originalName);
     }
 }

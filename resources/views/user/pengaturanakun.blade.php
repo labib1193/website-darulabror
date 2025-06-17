@@ -53,9 +53,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="telepon">No. Telepon</label>
-                        <input type="tel" class="form-control @error('telepon') is-invalid @enderror"
-                            id="telepon" name="telepon" value="{{ old('telepon', $identitas->no_hp_1 ?? '') }}"
+                        <label for="telepon">No. Telepon</label> <input type="tel" class="form-control @error('telepon') is-invalid @enderror"
+                            id="telepon" name="telepon" value="{{ old('telepon', $identitas->no_hp ?? '') }}"
                             placeholder="08xxxxxxxxxx">
                         @error('telepon')
                         <div class="invalid-feedback">{{ $message }}</div>

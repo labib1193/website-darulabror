@@ -53,12 +53,12 @@ class PengaturanController extends Controller
             $identitas = $user->identitas;
             if ($identitas) {
                 $identitas->update([
-                    'no_hp_1' => $request->telepon,
+                    'no_hp' => $request->telepon,
                 ]);
             } else {
                 Identitas::create([
                     'user_id' => $user->id,
-                    'no_hp_1' => $request->telepon,
+                    'no_hp' => $request->telepon,
                 ]);
             }
 

@@ -26,16 +26,20 @@ Route::middleware('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // User Management
-    Route::resource('users', UserController::class);
-
-    // Data Master - Identitas
-    Route::resource('identitas', IdentitasController::class);
+    Route::resource('users', UserController::class);    // Data Master - Identitas
+    Route::resource('identitas', IdentitasController::class)->parameters([
+        'identitas' => 'identitas'
+    ]);
+    Route::patch('identitas/{identitas}/status', [IdentitasController::class, 'updateStatus'])->name('identitas.updateStatus');
 
     // Data Master - Orangtua
-    Route::resource('orangtua', OrangtuaController::class);
-
-    // Data Master - Dokumen
-    Route::resource('dokumen', DokumenController::class);
+    Route::resource('orangtua', OrangtuaController::class)->parameters([
+        'orangtua' => 'orangtua'
+    ]);    // Data Master - Dokumen
+    Route::resource('dokumen', DokumenController::class)->parameters([
+        'dokumen' => 'dokumen'
+    ]);
+    Route::get('dokumen/{dokumen}/download/{field}', [DokumenController::class, 'download'])->name('dokumen.download');
 
     // Pembayaran
     Route::resource('pembayaran', PembayaranController::class);

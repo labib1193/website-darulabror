@@ -109,12 +109,19 @@
                                     <label for="pendidikan_terakhir" class="form-label">Pendidikan Terakhir</label>
                                     <input type="text" class="form-control" id="pendidikan_terakhir" name="pendidikan_terakhir">
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                                     <select class="form-control" id="status" name="status" required>
                                         <option value="">Pilih Status</option>
-                                        <option value="Orangtua">Orangtua</option>
+                                        <option value="Ayah">Ayah</option>
+                                        <option value="Ibu">Ibu</option>
+                                        <option value="Kakak">Kakak</option>
+                                        <option value="Adik">Adik</option>
+                                        <option value="Paman">Paman</option>
+                                        <option value="Bibi">Bibi</option>
+                                        <option value="Kakek">Kakek</option>
+                                        <option value="Nenek">Nenek</option>
+                                        <option value="Sepupu">Sepupu</option>
                                         <option value="Wali">Wali</option>
                                     </select>
                                 </div>
@@ -141,20 +148,9 @@
                                         <option value="> 10 juta">> 10 juta</option>
                                     </select>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="no_hp_1" class="form-label">No. HP 1 <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="no_hp_1" name="no_hp_1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="no_hp_2" class="form-label">No. HP 2</label>
-                                            <input type="text" class="form-control" id="no_hp_2" name="no_hp_2">
-                                        </div>
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="no_hp_1" class="form-label">No. HP <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="no_hp_1" name="no_hp_1" required>
                                 </div>
 
                                 <h6 class="text-secondary mb-3"><i class="fas fa-map-marker-alt"></i> Data Alamat</h6>
@@ -237,7 +233,7 @@
                                         </small>
                                     </div>
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-outline-light btn-edit" data-id="{{ $orangtua->id }}" title="Edit">
+                                        <button type="button" class="btn btn-sm btn-outline-primary btn-edit" data-id="{{ $orangtua->id }}" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="{{ $orangtua->id }}" data-name="{{ $orangtua->nama_lengkap }}" title="Hapus">
@@ -299,9 +295,6 @@
                                             <div class="col-4 text-muted small">No. HP:</div>
                                             <div class="col-8 small">
                                                 <i class="fas fa-phone text-success"></i> {{ $orangtua->no_hp_1 }}
-                                                @if($orangtua->no_hp_2)
-                                                <br><i class="fas fa-phone text-info"></i> {{ $orangtua->no_hp_2 }}
-                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -502,7 +495,6 @@
             $('#tanggal_lahir').val(data.tanggal_lahir);
             $('#pendidikan_terakhir').val(data.pendidikan_terakhir);
             $('#no_hp_1').val(data.no_hp_1);
-            $('#no_hp_2').val(data.no_hp_2);
             $('#pekerjaan').val(data.pekerjaan);
             $('#penghasilan').val(data.penghasilan);
             $('#provinsi').val(data.provinsi);
@@ -539,8 +531,7 @@
         $('#nik').on('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '').substring(0, 16);
         });
-
-        $('#no_hp_1, #no_hp_2').on('input', function() {
+        $('#no_hp_1').on('input', function() {
             this.value = this.value.replace(/[^0-9+\-\s]/g, '');
         });
 

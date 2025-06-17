@@ -40,7 +40,6 @@ class OrangtuaController extends Controller
             'tanggal_lahir' => 'required|date',
             'pendidikan_terakhir' => 'nullable|string|max:255',
             'no_hp_1' => 'required|string|max:20',
-            'no_hp_2' => 'nullable|string|max:20',
             'pekerjaan' => 'nullable|string|max:255',
             'penghasilan' => 'nullable|string|max:255',
             'provinsi' => 'nullable|string|max:255',
@@ -48,7 +47,7 @@ class OrangtuaController extends Controller
             'kecamatan' => 'nullable|string|max:255',
             'alamat_lengkap' => 'nullable|string',
             'kode_pos' => 'nullable|string|max:10',
-            'status' => 'required|in:Orangtua,Wali',
+            'status' => 'required|in:Ayah,Ibu,Kakak,Adik,Paman,Bibi,Kakek,Nenek,Sepupu,Wali',
         ]);
 
         if ($validator->fails()) {
@@ -68,7 +67,6 @@ class OrangtuaController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'pendidikan_terakhir' => $request->pendidikan_terakhir,
             'no_hp_1' => $request->no_hp_1,
-            'no_hp_2' => $request->no_hp_2,
             'pekerjaan' => $request->pekerjaan,
             'penghasilan' => $request->penghasilan,
             'provinsi' => $request->provinsi,
@@ -118,7 +116,6 @@ class OrangtuaController extends Controller
             'tanggal_lahir' => 'required|date',
             'pendidikan_terakhir' => 'nullable|string|max:255',
             'no_hp_1' => 'required|string|max:20',
-            'no_hp_2' => 'nullable|string|max:20',
             'pekerjaan' => 'nullable|string|max:255',
             'penghasilan' => 'nullable|string|max:255',
             'provinsi' => 'nullable|string|max:255',
@@ -126,7 +123,7 @@ class OrangtuaController extends Controller
             'kecamatan' => 'nullable|string|max:255',
             'alamat_lengkap' => 'nullable|string',
             'kode_pos' => 'nullable|string|max:10',
-            'status' => 'required|in:Orangtua,Wali',
+            'status' => 'required|in:Ayah,Ibu,Kakak,Adik,Paman,Bibi,Kakek,Nenek,Sepupu,Wali',
         ]);
 
         if ($validator->fails()) {
@@ -147,7 +144,6 @@ class OrangtuaController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'pendidikan_terakhir' => $request->pendidikan_terakhir,
             'no_hp_1' => $request->no_hp_1,
-            'no_hp_2' => $request->no_hp_2,
             'pekerjaan' => $request->pekerjaan,
             'penghasilan' => $request->penghasilan,
             'provinsi' => $request->provinsi,

@@ -86,4 +86,15 @@ class Pembayaran extends Model
             default => 'Tidak Diketahui'
         };
     }
+
+    // Backward compatibility accessor for status_pembayaran
+    public function getStatusPembayaranAttribute()
+    {
+        return match ($this->status_verifikasi) {
+            'approved' => 'lunas',
+            'rejected' => 'gagal',
+            'pending' => 'pending',
+            default => 'pending'
+        };
+    }
 }

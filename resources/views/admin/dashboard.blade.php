@@ -32,8 +32,8 @@
         <!-- small box -->
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>{{ $totalPembayaranLunas ?? 0 }}</h3>
-                <p>Pembayaran Lunas</p>
+                <h3>{{ $pembayaranTerverifikasi ?? 0 }}</h3>
+                <p>Pembayaran Terverifikasi</p>
             </div>
             <div class="icon">
                 <i class="ion ion-checkmark"></i>
@@ -46,7 +46,7 @@
         <!-- small box -->
         <div class="small-box bg-warning">
             <div class="inner">
-                <h3>{{ $totalPembayaranPending ?? 0 }}</h3>
+                <h3>{{ $pembayaranPending ?? 0 }}</h3>
                 <p>Pembayaran Pending</p>
             </div>
             <div class="icon">

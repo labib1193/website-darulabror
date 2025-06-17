@@ -19,7 +19,6 @@ class Orangtua extends Model
         'tanggal_lahir',
         'pendidikan_terakhir',
         'no_hp_1',
-        'no_hp_2',
         'pekerjaan',
         'penghasilan',
         'provinsi',

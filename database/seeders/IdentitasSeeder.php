@@ -14,29 +14,59 @@ class IdentitasSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::where('email', 'santri@test.com')->first();
+        // Buat user test jika belum ada
+        $users = [
+            [
+                'name' => 'Ahmad Santri',
+                'email' => 'santri@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'user'
+            ],
+            [
+                'name' => 'Fatimah Santriwati',
+                'email' => 'santriwati@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'user'
+            ],
+            [
+                'name' => 'Muhammad Hakim',
+                'email' => 'hakim@test.com',
+                'password' => bcrypt('password'),
+                'role' => 'user'
+            ]
+        ];
 
-        if ($user && !$user->identitas) {
-            Identitas::create([
-                'user_id' => $user->id,
-                'no_kk' => '1234567890123456',
-                'nik' => '9876543210123456',
-                'tempat_lahir' => 'Purwokerto',
-                'tanggal_lahir' => '2000-01-01',
-                'usia' => 25,
-                'jenis_kelamin' => 'Laki-laki',
-                'anak_ke' => 2,
-                'jumlah_saudara' => 3,
-                'tinggal_bersama' => 'Orangtua',
-                'pendidikan_terakhir' => 'SMA/MA',
-                'no_hp_1' => '081234567890',
-                'no_hp_2' => '085678901234',
-                'provinsi' => 'Jawa Tengah',
-                'kabupaten' => 'Banyumas',
-                'kecamatan' => 'Purwokerto Utara',
-                'alamat_lengkap' => 'Jl. Contoh No. 123, RT 01/RW 02',
-                'kode_pos' => '53116'
-            ]);
+        foreach ($users as $userData) {
+            $user = User::firstOrCreate(
+                ['email' => $userData['email']],
+                $userData
+            );
+
+            // Buat data identitas jika belum ada
+            if (!$user->identitas) {
+                Identitas::create([
+                    'user_id' => $user->id,
+                    'no_kk' => '123456789012345' . ($user->id % 10),
+                    'nik' => '987654321012345' . ($user->id % 10),
+                    'tempat_lahir' => 'Purwokerto',
+                    'tanggal_lahir' => '2000-0' . ($user->id % 9 + 1) . '-15',
+                    'usia' => 24 + $user->id,
+                    'jenis_kelamin' => $user->id % 2 == 0 ? 'Perempuan' : 'Laki-laki',
+                    'anak_ke' => $user->id % 3 + 1,
+                    'jumlah_saudara' => $user->id % 4 + 1,
+                    'tinggal_bersama' => 'Orangtua',
+                    'pendidikan_terakhir' => 'SMA/MA',
+                    'pekerjaan' => $user->id % 2 == 0 ? 'Mahasiswa' : 'Karyawan Swasta',
+                    'no_hp' => '08123456789' . ($user->id % 10),
+                    'provinsi' => 'Jawa Tengah',
+                    'kabupaten' => 'Banyumas',
+                    'kecamatan' => 'Purwokerto Utara',
+                    'desa' => 'Karangwangkal',
+                    'alamat_lengkap' => 'Jl. Contoh No. ' . (100 + $user->id) . ', RT 01/RW 02',
+                    'kode_pos' => '53116',
+                    'status_verifikasi' => $user->id % 3 == 0 ? 'terverifikasi' : ($user->id % 2 == 0 ? 'pending' : 'ditolak')
+                ]);
+            }
         }
     }
 }

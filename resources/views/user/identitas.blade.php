@@ -39,7 +39,20 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
-                <h3 class="card-title"><i class="fas fa-user"></i> Data Identitas Diri</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-user"></i> Data Identitas Diri
+                    @if($identitas && $identitas->status_verifikasi)
+                    @if($identitas->status_verifikasi == 'terverifikasi')
+                    <span class="badge badge-success ml-2">Terverifikasi</span>
+                    @elseif($identitas->status_verifikasi == 'pending')
+                    <span class="badge badge-warning ml-2">Pending</span>
+                    @else
+                    <span class="badge badge-danger ml-2">Belum Diverifikasi</span>
+                    @endif
+                    @else
+                    <span class="badge badge-secondary ml-2">Data Kosong</span>
+                    @endif
+                </h3>
                 <div id="action-buttons">
                     <button type="button" class="btn btn-primary btn-sm" id="btn-edit">
                         <i class="fas fa-edit"></i> Ubah Data
@@ -75,31 +88,38 @@
                             value="{{ $identitas->no_kk ?? '-' }}"
                             placeholder="Nomor Kartu Keluarga">
                     </div>
-                </div>
-
-                <!-- NIK -->
+                </div> <!-- NIK -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">NIK</label>
+                    <label class="col-sm-3 col-form-label">
+                        NIK <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
                         <input type="text" name="nik" class="form-control editable-field" readonly
-                            value="{{ $identitas->nik ?? '-' }}"
-                            placeholder="Nomor Induk Kependudukan">
+                            value="{{ $identitas->nik ?? '' }}"
+                            placeholder="Nomor Induk Kependudukan (16 digit)"
+                            pattern="[0-9]{16}"
+                            maxlength="16">
+                        <small class="form-text text-muted">16 digit angka sesuai KTP</small>
                     </div>
                 </div>
 
                 <!-- Tempat Lahir -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Tempat Lahir</label>
+                    <label class="col-sm-3 col-form-label">
+                        Tempat Lahir <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
                         <input type="text" name="tempat_lahir" class="form-control editable-field" readonly
-                            value="{{ $identitas->tempat_lahir ?? '-' }}"
+                            value="{{ $identitas->tempat_lahir ?? '' }}"
                             placeholder="Tempat Lahir">
                     </div>
                 </div>
 
                 <!-- Tanggal Lahir -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Tanggal Lahir</label>
+                    <label class="col-sm-3 col-form-label">
+                        Tanggal Lahir <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
                         <input type="date" name="tanggal_lahir" class="form-control editable-field" readonly
                             value="{{ $identitas->tanggal_lahir ? $identitas->tanggal_lahir->format('Y-m-d') : '' }}">
@@ -108,7 +128,9 @@
 
                 <!-- Jenis Kelamin -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Jenis Kelamin</label>
+                    <label class="col-sm-3 col-form-label">
+                        Jenis Kelamin <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
                         <select name="jenis_kelamin" class="form-control editable-field" disabled>
                             <option value="">Pilih Jenis Kelamin</option>
@@ -146,9 +168,7 @@
                             value="{{ $identitas->tinggal_bersama ?? '-' }}"
                             placeholder="Tinggal bersama siapa">
                     </div>
-                </div>
-
-                <!-- Pendidikan Terakhir -->
+                </div> <!-- Pendidikan Terakhir -->
                 <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Pendidikan Terakhir</label>
                     <div class="col-sm-9">
@@ -158,62 +178,81 @@
                     </div>
                 </div>
 
-                <!-- No. HP 1 -->
+                <!-- Pekerjaan -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">No. HP 1</label>
+                    <label class="col-sm-3 col-form-label">Pekerjaan</label>
                     <div class="col-sm-9">
-                        <input type="text" name="no_hp_1" class="form-control editable-field" readonly
-                            value="{{ $identitas->no_hp_1 ?? '-' }}"
-                            placeholder="Nomor HP Utama">
+                        <input type="text" name="pekerjaan" class="form-control editable-field" readonly
+                            value="{{ $identitas->pekerjaan ?? '-' }}"
+                            placeholder="Pekerjaan saat ini">
                     </div>
-                </div>
-
-                <!-- No. HP 2 -->
+                </div><!-- No. HP -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">No. HP 2</label>
+                    <label class="col-sm-3 col-form-label">
+                        No. HP <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
-                        <input type="text" name="no_hp_2" class="form-control editable-field" readonly
-                            value="{{ $identitas->no_hp_2 ?? '-' }}"
-                            placeholder="Nomor HP Alternatif (Opsional)">
+                        <input type="text" name="no_hp" class="form-control editable-field" readonly
+                            value="{{ $identitas->no_hp ?? '' }}"
+                            placeholder="Nomor HP (contoh: 08123456789)"
+                            pattern="^08[0-9]{8,11}$"
+                            maxlength="13">
+                        <small class="form-text text-muted">Format: 08xxxxxxxxx (8-13 digit)</small>
                     </div>
-                </div>
-
-                <!-- Provinsi -->
+                </div> <!-- Provinsi -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Provinsi</label>
+                    <label class="col-sm-3 col-form-label">
+                        Provinsi <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
                         <input type="text" name="provinsi" class="form-control editable-field" readonly
-                            value="{{ $identitas->provinsi ?? '-' }}"
+                            value="{{ $identitas->provinsi ?? '' }}"
                             placeholder="Provinsi">
                     </div>
                 </div>
 
                 <!-- Kabupaten -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Kabupaten</label>
+                    <label class="col-sm-3 col-form-label">
+                        Kabupaten <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
                         <input type="text" name="kabupaten" class="form-control editable-field" readonly
-                            value="{{ $identitas->kabupaten ?? '-' }}"
+                            value="{{ $identitas->kabupaten ?? '' }}"
                             placeholder="Kabupaten/Kota">
+                    </div>
+                </div> <!-- Kecamatan -->
+                <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">
+                        Kecamatan <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" name="kecamatan" class="form-control editable-field" readonly
+                            value="{{ $identitas->kecamatan ?? '' }}"
+                            placeholder="Kecamatan">
                     </div>
                 </div>
 
-                <!-- Kecamatan -->
+                <!-- Desa/Kelurahan -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Kecamatan</label>
+                    <label class="col-sm-3 col-form-label">
+                        Desa/Kelurahan <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
-                        <input type="text" name="kecamatan" class="form-control editable-field" readonly
-                            value="{{ $identitas->kecamatan ?? '-' }}"
-                            placeholder="Kecamatan">
+                        <input type="text" name="desa" class="form-control editable-field" readonly
+                            value="{{ $identitas->desa ?? '' }}"
+                            placeholder="Desa/Kelurahan">
                     </div>
                 </div>
 
                 <!-- Alamat Lengkap -->
                 <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Alamat Lengkap</label>
+                    <label class="col-sm-3 col-form-label">
+                        Alamat Lengkap <span class="text-danger">*</span>
+                    </label>
                     <div class="col-sm-9">
                         <textarea name="alamat_lengkap" class="form-control editable-field" readonly
-                            rows="3" placeholder="Alamat lengkap">{{ $identitas->alamat_lengkap ?? '-' }}</textarea>
+                            rows="3" placeholder="Alamat lengkap termasuk RT/RW">{{ $identitas->alamat_lengkap ?? '' }}</textarea>
                     </div>
                 </div>
 
@@ -381,29 +420,154 @@
                     setTimeout(() => notification.remove(), 300);
                 }
             }, 4000);
-        }
-
-        // Add input validation feedback
+        } // Add input validation feedback
         editableFields.forEach(field => {
             field.addEventListener('input', function() {
-                if (this.hasAttribute('required') && this.value.trim()) {
-                    this.style.borderColor = '#28a745';
-                } else if (this.hasAttribute('required') && !this.value.trim()) {
-                    this.style.borderColor = '#dc3545';
-                } else {
-                    this.style.borderColor = '#007bff';
-                }
+                validateField(this);
             });
 
             field.addEventListener('blur', function() {
                 if (!this.readOnly && !this.disabled) {
-                    if (this.hasAttribute('required') && !this.value.trim()) {
-                        this.style.borderColor = '#dc3545';
-                    }
+                    validateField(this);
                 }
             });
         });
+
+        // Field validation function
+        function validateField(field) {
+            const isRequired = field.hasAttribute('required') || field.name === 'nik' || field.name === 'tempat_lahir' || field.name === 'tanggal_lahir' || field.name === 'jenis_kelamin' || field.name === 'no_hp' || field.name === 'provinsi' || field.name === 'kabupaten' || field.name === 'kecamatan' || field.name === 'desa' || field.name === 'alamat_lengkap';
+
+            if (field.readOnly || field.disabled) return;
+
+            // Remove existing feedback
+            const feedback = field.parentNode.querySelector('.invalid-feedback');
+            if (feedback) feedback.remove();
+
+            let isValid = true;
+            let message = '';
+
+            if (isRequired && !field.value.trim()) {
+                isValid = false;
+                message = 'Field ini harus diisi';
+            } else if (field.name === 'nik' && field.value.trim()) {
+                if (!/^[0-9]{16}$/.test(field.value)) {
+                    isValid = false;
+                    message = 'NIK harus berupa 16 digit angka';
+                }
+            } else if (field.name === 'no_hp' && field.value.trim()) {
+                if (!/^08[0-9]{8,11}$/.test(field.value)) {
+                    isValid = false;
+                    message = 'Nomor HP harus diawali 08 dan berisi 10-13 digit';
+                }
+            }
+
+            // Apply visual feedback
+            if (isValid) {
+                field.style.borderColor = field.value.trim() ? '#28a745' : '#007bff';
+                field.classList.remove('is-invalid');
+            } else {
+                field.style.borderColor = '#dc3545';
+                field.classList.add('is-invalid');
+
+                // Add error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                errorDiv.textContent = message;
+                field.parentNode.appendChild(errorDiv);
+            }
+        }
+
+        // Form validation before submit
+        btnSave.addEventListener('click', function() {
+            let hasErrors = false;
+            editableFields.forEach(field => {
+                validateField(field);
+                if (field.classList.contains('is-invalid')) {
+                    hasErrors = true;
+                }
+            });
+
+            if (hasErrors) {
+                showNotification('Mohon perbaiki kesalahan pada form sebelum menyimpan', 'error');
+                return;
+            }
+
+            // Submit form
+            form.submit();
+        });
     });
 </script>
+@endpush
+@push('styles')
+<style>
+    .form-group .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .form-control:valid:not(.form-control-plaintext) {
+        border-color: #28a745;
+    }
+
+    .badge {
+        font-size: 0.75em;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .card-header .card-title {
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    .form-text.text-muted {
+        font-size: 0.8em;
+        font-style: italic;
+    }
+
+    .notification-toast {
+        animation: slideInRight 0.3s ease-out;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .editable-field:not([readonly]):not([disabled]) {
+        transition: all 0.3s ease;
+    }
+
+    .editable-field:not([readonly]):not([disabled]):hover {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.1);
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .invalid-feedback {
+        display: block;
+        font-size: 0.875em;
+        color: #dc3545;
+        margin-top: 0.25rem;
+    }
+</style>
 @endpush
 @endsection
