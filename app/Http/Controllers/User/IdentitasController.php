@@ -60,7 +60,7 @@ class IdentitasController extends Controller
 
         // Set status verifikasi default jika data baru atau belum ada status
         if (!$identitas->exists || empty($identitas->status_verifikasi)) {
-            $identitas->status_verifikasi = 'Belum Diverifikasi';
+            $identitas->status_verifikasi = 'pending';
         }
 
         $identitas->save();

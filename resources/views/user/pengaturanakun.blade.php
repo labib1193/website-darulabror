@@ -187,9 +187,14 @@
                         <td><strong>Email Verified:</strong></td>
                         <td>
                             @if($user->email_verified_at)
-                            <span class="badge badge-success">Terverifikasi</span>
+                            <span class="badge badge-success">
+                                <i class="fas fa-check-circle"></i> Terverifikasi
+                            </span>
+                            <br><small class="text-muted">{{ $user->email_verified_at->format('d/m/Y H:i') }}</small>
                             @else
-                            <span class="badge badge-warning">Belum Terverifikasi</span>
+                            <span class="badge badge-warning">
+                                <i class="fas fa-clock"></i> Belum Terverifikasi
+                            </span>
                             @endif
                         </td>
                     </tr>

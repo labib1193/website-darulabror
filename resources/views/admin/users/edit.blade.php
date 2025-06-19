@@ -65,7 +65,7 @@
                                         <label for="password">Password Baru</label>
                                         <input type="password" class="form-control @error('password') is-invalid @enderror"
                                             id="password" name="password">
-                                        <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password. Minimal 8 karakter.</small>
+                                        <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password. Minimal 6 karakter.</small>
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -97,6 +97,29 @@
                                         </span>
                                         @enderror
                                     </div>
+                                    <div class="form-group">
+                                        <label for="status">Status <span class="text-danger">*</span></label>
+                                        <select class="form-control @error('status') is-invalid @enderror"
+                                            id="status" name="status" required>
+                                            <option value="">Pilih Status</option>
+                                            <option value="active" {{ old('status', $user->status ?? 'active') == 'active' ? 'selected' : '' }}>Aktif</option>
+                                            <option value="inactive" {{ old('status', $user->status ?? 'active') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
+                                        </select>
+                                        @error('status')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="email_verified" name="email_verified" value="1"
+                                                {{ old('email_verified', $user->email_verified_at ? '1' : '0') == '1' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="email_verified">
+                                                Email sudah terverifikasi
+                                            </label>
+                                        </div>
+                                    </div>
 
                                     <div class="form-group">
                                         <label for="profile_photo">Foto Profil</label>
@@ -119,19 +142,7 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="email_verified" name="email_verified" value="1"
-                                                {{ old('email_verified', $user->email_verified_at ? '1' : '0') == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="email_verified">
-                                                Email sudah terverifikasi
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Preview foto profil lama jika ada -->
+                                    </div> <!-- Preview foto profil lama jika ada -->
                                     @if($user->profile_photo)
                                     <div class="form-group">
                                         <label>Foto Profil Saat Ini</label>

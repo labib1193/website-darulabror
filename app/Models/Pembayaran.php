@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class Pembayaran extends Model
 {
@@ -14,27 +15,44 @@ class Pembayaran extends Model
 
     protected $fillable = [
         'user_id',
+        'kode_pembayaran',
+        'jenis_pembayaran',
+        'jumlah_tagihan',
+        'deskripsi',
         'bukti_pembayaran',
         'nominal',
         'tanggal_transfer',
+        'batas_pembayaran',
         'bank_pengirim',
         'nama_pengirim',
         'status_verifikasi',
+        'status_pembayaran',
         'keterangan',
         'bukti_pembayaran_original',
         'bukti_pembayaran_uploaded_at',
+        'verified_by',
+        'verified_at',
     ];
 
     protected $casts = [
         'tanggal_transfer' => 'date',
+        'batas_pembayaran' => 'datetime',
         'bukti_pembayaran_uploaded_at' => 'datetime',
+        'verified_at' => 'datetime',
         'nominal' => 'decimal:2',
+        'jumlah_tagihan' => 'decimal:2',
     ];
 
     // Relationship with User
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Relationship with admin who verified the payment
+    public function verifiedBy()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 
     // Accessor for formatted nominal
@@ -65,25 +83,36 @@ class Pembayaran extends Model
         return round($bytes, $precision) . ' ' . $units[$i];
     }
 
-    // Accessor for status badge class
+    // Get verification status label
+    public function getStatusVerifikasiLabelAttribute()
+    {
+        return match ($this->status_verifikasi) {
+            'pending' => 'Menunggu Verifikasi',
+            'approved' => 'Disetujui',
+            'rejected' => 'Ditolak',
+            default => 'Tidak Diketahui'
+        };
+    }
+
+    // Get status badge class for display
     public function getStatusBadgeClassAttribute()
     {
         return match ($this->status_verifikasi) {
+            'pending' => 'badge-warning',
             'approved' => 'badge-success',
             'rejected' => 'badge-danger',
-            'pending' => 'badge-warning',
             default => 'badge-secondary'
         };
     }
 
-    // Accessor for status text
+    // Get status text for display
     public function getStatusTextAttribute()
     {
         return match ($this->status_verifikasi) {
+            'pending' => 'Menunggu Verifikasi',
             'approved' => 'Disetujui',
             'rejected' => 'Ditolak',
-            'pending' => 'Menunggu Verifikasi',
-            default => 'Tidak Diketahui'
+            default => 'Status Tidak Diketahui'
         };
     }
 
@@ -96,5 +125,133 @@ class Pembayaran extends Model
             'pending' => 'pending',
             default => 'pending'
         };
+    }
+
+    // Generate unique payment code
+    public static function generateKodePembayaran($jenis = 'pendaftaran')
+    {
+        $prefix = match ($jenis) {
+            'pendaftaran' => 'PDF',
+            'spp_bulanan' => 'SPP',
+            'seragam' => 'SRG',
+            'ujian' => 'UJN',
+            'kegiatan' => 'KGT',
+            'lainnya' => 'LN',
+            default => 'PMB'
+        };
+
+        $year = date('Y');
+        $month = date('m');
+
+        // Use database transaction to ensure uniqueness
+        return DB::transaction(function () use ($prefix, $year, $month, $jenis) {
+            $attempts = 0;
+            $maxAttempts = 100; // Increased max attempts
+
+            do {
+                $attempts++;
+
+                if ($attempts === 1) {
+                    // First attempt: sequential number based on existing codes with same prefix
+                    $pattern = $prefix . $year . $month . '%';
+                    $count = self::where('kode_pembayaran', 'LIKE', $pattern)->lockForUpdate()->count() + 1;
+                    $code = $prefix . $year . $month . str_pad($count, 4, '0', STR_PAD_LEFT);
+                } elseif ($attempts <= 5) {
+                    // Attempts 2-5: try different sequential numbers
+                    $pattern = $prefix . $year . $month . '%';
+                    $count = self::where('kode_pembayaran', 'LIKE', $pattern)->lockForUpdate()->count() + $attempts;
+                    $code = $prefix . $year . $month . str_pad($count, 4, '0', STR_PAD_LEFT);
+                } else {
+                    // Attempts 6+: use timestamp + random for guaranteed uniqueness
+                    $timestamp = microtime(true);
+                    $microseconds = intval(($timestamp - floor($timestamp)) * 1000000);
+                    $random = mt_rand(10, 99);
+
+                    // Create a unique suffix using timestamp and random
+                    $suffix = substr($microseconds, -2) . $random;
+                    $code = $prefix . $year . $month . $suffix;
+
+                    // Ensure it's exactly the right length
+                    if (strlen($code) > 12) {
+                        $code = substr($code, 0, 12);
+                    }
+                }
+
+                // Double-check if code exists with a FOR UPDATE lock to prevent race conditions
+                $exists = self::where('kode_pembayaran', $code)->lockForUpdate()->exists();
+
+                if (!$exists) {
+                    return $code;
+                }
+
+                // Add a small delay to reduce contention
+                if ($attempts > 10) {
+                    usleep(mt_rand(1000, 5000)); // 1-5ms delay
+                }
+            } while ($attempts < $maxAttempts);
+
+            // Ultimate fallback: use uniqid for guaranteed uniqueness
+            $uniqueId = strtoupper(substr(uniqid('', true), -4));
+            $fallbackCode = $prefix . $year . $month . $uniqueId;
+
+            // Ensure it's not too long
+            if (strlen($fallbackCode) > 12) {
+                $fallbackCode = substr($fallbackCode, 0, 12);
+            }
+
+            return $fallbackCode;
+        });
+    }
+
+    // Get payment type label
+    public function getJenisPembayaranLabelAttribute()
+    {
+        return match ($this->jenis_pembayaran) {
+            'pendaftaran' => 'Biaya Pendaftaran',
+            'spp_bulanan' => 'SPP Bulanan',
+            'seragam' => 'Biaya Seragam',
+            'ujian' => 'Buku & Alat Tulis',
+            'kegiatan' => 'Biaya Kegiatan',
+            'lainnya' => 'Biaya Lainnya',
+            default => $this->jenis_pembayaran ?? 'Tidak Diketahui'
+        };
+    }
+
+    // Get status pembayaran label
+    public function getStatusPembayaranLabelAttribute()
+    {
+        return match ($this->status_pembayaran) {
+            'belum_bayar' => 'Belum Bayar',
+            'pending' => 'Menunggu Verifikasi',
+            'lunas' => 'Lunas',
+            'gagal' => 'Gagal/Ditolak',
+            default => 'Tidak Diketahui'
+        };
+    }
+
+    // Get status pembayaran badge class
+    public function getStatusPembayaranBadgeAttribute()
+    {
+        return match ($this->status_pembayaran) {
+            'belum_bayar' => 'badge-secondary',
+            'pending' => 'badge-warning',
+            'lunas' => 'badge-success',
+            'gagal' => 'badge-danger',
+            default => 'badge-secondary'
+        };
+    }
+
+    // Check if payment is overdue
+    public function getIsOverdueAttribute()
+    {
+        return $this->batas_pembayaran &&
+            $this->batas_pembayaran < now() &&
+            $this->status_pembayaran !== 'lunas';
+    }
+
+    // Get formatted jumlah tagihan
+    public function getFormattedJumlahTagihanAttribute()
+    {
+        return 'Rp ' . number_format($this->jumlah_tagihan, 0, ',', '.');
     }
 }

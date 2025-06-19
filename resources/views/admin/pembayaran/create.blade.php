@@ -55,12 +55,12 @@
                                         <select class="form-control @error('jenis_pembayaran') is-invalid @enderror"
                                             id="jenis_pembayaran" name="jenis_pembayaran" required>
                                             <option value="">Pilih Jenis Pembayaran</option>
-                                            <option value="Pendaftaran" {{ old('jenis_pembayaran') == 'Pendaftaran' ? 'selected' : '' }}>Pendaftaran</option>
-                                            <option value="SPP" {{ old('jenis_pembayaran') == 'SPP' ? 'selected' : '' }}>SPP</option>
-                                            <option value="Seragam" {{ old('jenis_pembayaran') == 'Seragam' ? 'selected' : '' }}>Seragam</option>
-                                            <option value="Buku" {{ old('jenis_pembayaran') == 'Buku' ? 'selected' : '' }}>Buku</option>
-                                            <option value="Kegiatan" {{ old('jenis_pembayaran') == 'Kegiatan' ? 'selected' : '' }}>Kegiatan</option>
-                                            <option value="Lainnya" {{ old('jenis_pembayaran') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                            <option value="pendaftaran" {{ old('jenis_pembayaran') == 'pendaftaran' ? 'selected' : '' }}>Pendaftaran</option>
+                                            <option value="spp_bulanan" {{ old('jenis_pembayaran') == 'spp_bulanan' ? 'selected' : '' }}>SPP Bulanan</option>
+                                            <option value="seragam" {{ old('jenis_pembayaran') == 'seragam' ? 'selected' : '' }}>Seragam</option>
+                                            <option value="ujian" {{ old('jenis_pembayaran') == 'ujian' ? 'selected' : '' }}>Ujian/Buku</option>
+                                            <option value="kegiatan" {{ old('jenis_pembayaran') == 'kegiatan' ? 'selected' : '' }}>Kegiatan</option>
+                                            <option value="lainnya" {{ old('jenis_pembayaran') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                                         </select>
                                         @error('jenis_pembayaran')
                                         <span class="invalid-feedback" role="alert">

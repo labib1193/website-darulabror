@@ -21,7 +21,7 @@ Route::middleware(['guest'])->group(function () {
 // Route yang butuh login
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        return redirect()->route('user.identitas');
+        return view('user.dashboard');
     })->name('user.dashboard');
     Route::get('/identitas', [IdentitasController::class, 'index'])->name('user.identitas');
     Route::post('/identitas', [IdentitasController::class, 'update'])->name('user.identitas.update');
@@ -45,4 +45,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pengaturanakun/photo', [PengaturanController::class, 'updateProfilePhoto'])->name('user.pengaturanakun.photo');
     Route::delete('/pengaturanakun/account', [PengaturanController::class, 'deleteAccount'])->name('user.pengaturanakun.delete');
     Route::post('/logout', [UserAuthController::class, 'logout'])->name('user.auth.logout');
+
+    // Test routes for development
+    Route::get('/test-fixed-sidebar', function () {
+        return view('user.test-fixed-sidebar');
+    })->name('user.test.fixed-sidebar');
 });

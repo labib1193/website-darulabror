@@ -13,14 +13,21 @@ class UserAuthController extends Controller
     /**
      * Tampilkan halaman login
      */
-    public function showLogin()
+    public function showLogin(Request $request)
     {
         // Backup check: jika user sudah login, redirect ke dashboard
         if (Auth::check()) {
             return redirect()->route('user.dashboard');
         }
 
-        return view('user.auth.login');
+        // Check if user came from expired session
+        $message = null;
+        if ($request->has('expired') || $request->session()->has('auth_expired')) {
+            $message = 'Sesi Anda telah berakhir. Silakan login kembali.';
+            $request->session()->forget('auth_expired');
+        }
+
+        return view('user.auth.login', compact('message'));
     }
 
     /**

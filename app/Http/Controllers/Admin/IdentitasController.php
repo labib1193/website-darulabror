@@ -35,13 +35,12 @@ class IdentitasController extends Controller
             });
         }
 
-        $identitas = $query->latest()->paginate(10);
-
-        // Data untuk filter dropdown
+        $identitas = $query->latest()->paginate(10);        // Data untuk filter dropdown
         $statusOptions = [
             'pending' => 'Pending',
             'terverifikasi' => 'Terverifikasi',
-            'ditolak' => 'Ditolak'
+            'ditolak' => 'Ditolak',
+            'Belum Diverifikasi' => 'Belum Diverifikasi'
         ];
 
         $jenisKelaminOptions = [
@@ -114,7 +113,7 @@ class IdentitasController extends Controller
             'desa' => 'required|string|max:100',
             'alamat_lengkap' => 'required|string',
             'kode_pos' => 'nullable|string|max:10',
-            'status_verifikasi' => 'nullable|in:pending,terverifikasi,ditolak',
+            'status_verifikasi' => 'nullable|in:pending,terverifikasi,ditolak,Belum Diverifikasi',
         ]);
 
         // Menyiapkan data untuk update dengan status verifikasi

@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -23,9 +23,13 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
+        'verification_status',
         'profile_photo',
         'profile_photo_original',
         'profile_photo_uploaded_at',
+        'password_changed_at',
+        'email_verified_at',
     ];
 
     /**
@@ -49,6 +53,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'profile_photo_uploaded_at' => 'datetime',
+            'password_changed_at' => 'datetime',
         ];
     }
 
@@ -104,14 +109,14 @@ class User extends Authenticatable
     }
 
     /**
-     * Get profile photo URL with fallback
+     * Get profile photo URL attribute (accessor)
      */
-    public function getProfilePhotoUrlWithFallback()
+    public function getProfilePhotoUrlAttribute()
     {
         if ($this->profile_photo && Storage::disk('public')->exists($this->profile_photo)) {
             return asset('storage/' . $this->profile_photo);
         }
-        return asset('AdminLTE/dist/img/user2-160x160.jpg');
+        return asset('AdminLTE/dist/img/user2-160x160.jpg'); // Default fallback image
     }
 
     /**
@@ -138,5 +143,55 @@ class User extends Authenticatable
         }
 
         return round($bytes, $precision) . ' ' . $units[$i];
+    }
+
+    /**
+     * Check if user email is verified
+     */
+    public function isEmailVerified()
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Get email verification status text
+     */
+    public function getEmailVerificationStatus()
+    {
+        return $this->isEmailVerified() ? 'Terverifikasi' : 'Belum Verifikasi';
+    }
+
+    /**
+     * Get email verification badge class
+     */
+    public function getEmailVerificationBadgeClass()
+    {
+        return $this->isEmailVerified() ? 'badge-success' : 'badge-warning';
+    }
+
+    /**
+     * Get verification status text (for email verification)
+     */
+    public function getVerificationStatusText()
+    {
+        return match ($this->verification_status ?? 'pending') {
+            'pending' => 'Belum Verifikasi',
+            'verified' => 'Terverifikasi',
+            'rejected' => 'Ditolak',
+            default => 'Belum Verifikasi'
+        };
+    }
+
+    /**
+     * Get verification status badge class (for email verification)
+     */
+    public function getVerificationStatusBadgeClass()
+    {
+        return match ($this->verification_status ?? 'pending') {
+            'pending' => 'badge-warning',
+            'verified' => 'badge-success',
+            'rejected' => 'badge-danger',
+            default => 'badge-warning'
+        };
     }
 }

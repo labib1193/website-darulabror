@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
+// ✅ Authentication fallback route
+Route::get('/login', function () {
+    return redirect()->route('user.auth.login');
+})->name('login');
+
 // ✅ Prefix untuk route admin
 Route::prefix('admin')->name('admin.')->group(function () {
     require __DIR__ . '/admin.php';

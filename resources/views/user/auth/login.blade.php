@@ -13,6 +13,13 @@
     <div class="card-body login-card-body">
         <p class="login-box-msg">Masuk untuk mengakses dashboard santri</p>
 
+        {{-- Notifikasi Session Expired --}}
+        @if (isset($message))
+        <div class="alert alert-warning">
+            <i class="fas fa-clock"></i> {{ $message }}
+        </div>
+        @endif
+
         {{-- Notifikasi Sukses --}}
         @if (session('success'))
         <div class="alert alert-success">

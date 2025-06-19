@@ -40,14 +40,15 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h3 class="card-title">
-                    <i class="fas fa-user"></i> Data Identitas Diri
-                    @if($identitas && $identitas->status_verifikasi)
+                    <i class="fas fa-user"></i> Data Identitas Diri @if($identitas && $identitas->status_verifikasi)
                     @if($identitas->status_verifikasi == 'terverifikasi')
                     <span class="badge badge-success ml-2">Terverifikasi</span>
                     @elseif($identitas->status_verifikasi == 'pending')
                     <span class="badge badge-warning ml-2">Pending</span>
+                    @elseif($identitas->status_verifikasi == 'ditolak')
+                    <span class="badge badge-danger ml-2">Ditolak</span>
                     @else
-                    <span class="badge badge-danger ml-2">Belum Diverifikasi</span>
+                    <span class="badge badge-secondary ml-2">Belum Diverifikasi</span>
                     @endif
                     @else
                     <span class="badge badge-secondary ml-2">Data Kosong</span>
@@ -85,7 +86,7 @@
                     <label class="col-sm-3 col-form-label">No. KK</label>
                     <div class="col-sm-9">
                         <input type="text" name="no_kk" class="form-control editable-field" readonly
-                            value="{{ $identitas->no_kk ?? '-' }}"
+                            value="{{ $identitas->no_kk ?? '' }}"
                             placeholder="Nomor Kartu Keluarga">
                     </div>
                 </div> <!-- NIK -->
@@ -165,7 +166,7 @@
                     <label class="col-sm-3 col-form-label">Tinggal Bersama</label>
                     <div class="col-sm-9">
                         <input type="text" name="tinggal_bersama" class="form-control editable-field" readonly
-                            value="{{ $identitas->tinggal_bersama ?? '-' }}"
+                            value="{{ $identitas->tinggal_bersama ?? '' }}"
                             placeholder="Tinggal bersama siapa">
                     </div>
                 </div> <!-- Pendidikan Terakhir -->
@@ -173,7 +174,7 @@
                     <label class="col-sm-3 col-form-label">Pendidikan Terakhir</label>
                     <div class="col-sm-9">
                         <input type="text" name="pendidikan_terakhir" class="form-control editable-field" readonly
-                            value="{{ $identitas->pendidikan_terakhir ?? '-' }}"
+                            value="{{ $identitas->pendidikan_terakhir ?? '' }}"
                             placeholder="Pendidikan terakhir">
                     </div>
                 </div>
@@ -183,7 +184,7 @@
                     <label class="col-sm-3 col-form-label">Pekerjaan</label>
                     <div class="col-sm-9">
                         <input type="text" name="pekerjaan" class="form-control editable-field" readonly
-                            value="{{ $identitas->pekerjaan ?? '-' }}"
+                            value="{{ $identitas->pekerjaan ?? '' }}"
                             placeholder="Pekerjaan saat ini">
                     </div>
                 </div><!-- No. HP -->
@@ -261,7 +262,7 @@
                     <label class="col-sm-3 col-form-label">Kode Pos</label>
                     <div class="col-sm-9">
                         <input type="text" name="kode_pos" class="form-control editable-field" readonly
-                            value="{{ $identitas->kode_pos ?? '-' }}"
+                            value="{{ $identitas->kode_pos ?? '' }}"
                             placeholder="Kode Pos">
                     </div>
                 </div>
