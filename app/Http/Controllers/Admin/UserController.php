@@ -13,22 +13,52 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->paginate(10);
+        // Cek role user yang sedang login
+        $currentUser = Auth::user();
+
+        if ($currentUser->role === 'superadmin') {
+            // Superadmin bisa melihat semua user (user, admin, superadmin)
+            $users = User::latest()->paginate(10);
+        } else {
+            // Admin hanya bisa melihat user biasa saja
+            $users = User::where('role', 'user')->latest()->paginate(10);
+        }
+
         return view('admin.users.index', compact('users'));
     }
-
     public function create()
     {
-        return view('admin.users.create');
-    }
+        // Tentukan role yang tersedia berdasarkan user yang login
+        $currentUser = Auth::user();
+        $availableRoles = [];
 
+        if ($currentUser->role === 'superadmin') {
+            $availableRoles = ['user', 'admin', 'superadmin'];
+        } else {
+            // Admin hanya bisa membuat user biasa
+            $availableRoles = ['user'];
+        }
+
+        return view('admin.users.create', compact('availableRoles'));
+    }
     public function store(Request $request)
     {
+        // Tentukan role yang diizinkan berdasarkan user yang login
+        $currentUser = Auth::user();
+        $allowedRoles = [];
+
+        if ($currentUser->role === 'superadmin') {
+            $allowedRoles = ['user', 'admin', 'superadmin'];
+        } else {
+            // Admin hanya bisa membuat user biasa
+            $allowedRoles = ['user'];
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:user,admin,superadmin',
+            'role' => 'required|in:' . implode(',', $allowedRoles),
             'status' => 'required|in:active,inactive',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -65,21 +95,70 @@ class UserController extends Controller
     }
     public function show(User $user)
     {
+        // Cek apakah admin dapat melihat detail user ini
+        $currentUser = Auth::user();
+
+        if ($currentUser->role !== 'superadmin') {
+            // Admin hanya bisa melihat detail user biasa, tidak bisa melihat admin/superadmin lain
+            if ($user->role !== 'user') {
+                return redirect()->route('admin.users.index')
+                    ->with('error', 'Anda tidak memiliki izin untuk melihat detail user dengan role ' . $user->role);
+            }
+        }
+
         $user->load(['identitas', 'orangtua', 'dokumen', 'pembayaran']);
         return view('admin.users.show', compact('user'));
     }
-
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
-    }
+        // Cek apakah admin dapat mengedit user ini
+        $currentUser = Auth::user();
 
+        if ($currentUser->role !== 'superadmin') {
+            // Admin hanya bisa edit user biasa, tidak bisa edit admin/superadmin lain
+            if ($user->role !== 'user') {
+                return redirect()->route('admin.users.index')
+                    ->with('error', 'Anda tidak memiliki izin untuk mengedit user dengan role ' . $user->role);
+            }
+        }
+
+        // Tentukan role yang tersedia berdasarkan user yang login
+        $availableRoles = [];
+        if ($currentUser->role === 'superadmin') {
+            $availableRoles = ['user', 'admin', 'superadmin'];
+        } else {
+            // Admin hanya bisa mengubah role ke user
+            $availableRoles = ['user'];
+        }
+
+        return view('admin.users.edit', compact('user', 'availableRoles'));
+    }
     public function update(Request $request, User $user)
     {
+        // Cek apakah admin dapat mengupdate user ini
+        $currentUser = Auth::user();
+
+        if ($currentUser->role !== 'superadmin') {
+            // Admin hanya bisa update user biasa, tidak bisa update admin/superadmin lain
+            if ($user->role !== 'user') {
+                return redirect()->route('admin.users.index')
+                    ->with('error', 'Anda tidak memiliki izin untuk mengupdate user dengan role ' . $user->role);
+            }
+        }
+
+        // Tentukan role yang diizinkan berdasarkan user yang login
+        $allowedRoles = [];
+        if ($currentUser->role === 'superadmin') {
+            $allowedRoles = ['user', 'admin', 'superadmin'];
+        } else {
+            // Admin hanya bisa mengubah role ke user
+            $allowedRoles = ['user'];
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|in:user,admin,superadmin',
+            'role' => 'required|in:' . implode(',', $allowedRoles),
             'status' => 'required|in:active,inactive',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'password' => 'nullable|string|min:6|confirmed',
@@ -126,17 +205,24 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate.');
     }
-
     public function destroy(User $user)
     {
+        $currentUser = Auth::user();
+
         // Prevent deleting superadmin users
         if ($user->role === 'superadmin') {
             return redirect()->route('admin.users.index')->with('error', 'Super Admin tidak dapat dihapus.');
         }
 
         // Prevent self-deletion
-        if (Auth::user()->id === $user->id) {
+        if ($currentUser->id === $user->id) {
             return redirect()->route('admin.users.index')->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+        }
+
+        // Admin hanya bisa menghapus user biasa, tidak bisa menghapus admin lain
+        if ($currentUser->role !== 'superadmin' && $user->role !== 'user') {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Anda tidak memiliki izin untuk menghapus user dengan role ' . $user->role);
         }
 
         // Delete profile photo if exists
@@ -167,9 +253,16 @@ class UserController extends Controller
 
     /**
      * Reset user password
-     */
-    public function resetPassword(User $user)
+     */    public function resetPassword(User $user)
     {
+        $currentUser = Auth::user();
+
+        // Admin hanya bisa reset password user biasa, tidak bisa reset admin/superadmin lain
+        if ($currentUser->role !== 'superadmin' && $user->role !== 'user') {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Anda tidak memiliki izin untuk reset password user dengan role ' . $user->role);
+        }
+
         $newPassword = 'password123'; // Default password
         $user->update([
             'password' => Hash::make($newPassword),

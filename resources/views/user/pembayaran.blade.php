@@ -23,11 +23,11 @@
                     <hr>
                     <strong>Jenis Pembayaran Yang Tersedia:</strong>
                     <ul class="mb-0">
-                        <li><strong>Pendaftaran:</strong> Rp 500.000 - Biaya pendaftaran siswa baru</li>
+                        <li><strong>Pendaftaran:</strong> Rp 500.000 - Biaya pendaftaran santri baru</li>
                         <li><strong>SPP Bulanan:</strong> Rp 300.000 - Biaya SPP setiap bulan</li>
-                        <li><strong>Seragam:</strong> Rp 750.000 - Seragam sekolah lengkap</li>
-                        <li><strong>Buku & Alat Tulis:</strong> Rp 250.000 - Buku dan alat tulis</li>
-                        <li><strong>Kegiatan:</strong> Rp 100.000 - Biaya kegiatan sekolah</li>
+                        <li><strong>Seragam:</strong> Rp 750.000 - Seragam pondok lengkap</li>
+                        <li><strong>Kitab-kitab Pelajaran:</strong> Rp 250.000 - Kitab-kitab pelajaran</li>
+                        <li><strong>Kegiatan:</strong> Rp 100.000 - Biaya kegiatan pondok</li>
                         <li><strong>Lainnya:</strong> Sesuai kebutuhan - Pembayaran khusus lainnya</li>
                     </ul>
                 </div>
@@ -126,9 +126,15 @@
                                     <a href="{{ route('user.pembayaran.download', $item->id) }}" class="btn btn-sm btn-info" title="Download Bukti">
                                         <i class="fas fa-download"></i>
                                     </a>
-                                    @endif
-                                    @if(in_array($item->status_verifikasi, ['pending', 'rejected']))
-                                    <button type="button" class="btn btn-sm btn-danger delete-payment-btn" data-id="{{ $item->id }}" title="Hapus">
+                                    @endif @if(in_array($item->status_verifikasi, ['pending', 'rejected']))
+                                    <button type="button" class="btn btn-sm btn-danger delete-payment-btn"
+                                        data-id="{{ $item->id }}"
+                                        data-jenis="{{ $item->jenis_pembayaran }}"
+                                        data-nominal="{{ number_format($item->nominal, 0, ',', '.') }}"
+                                        data-tanggal="{{ $item->tanggal_transfer ? $item->tanggal_transfer->format('d/m/Y') : '-' }}"
+                                        data-status="{{ $item->status_verifikasi }}"
+                                        data-kode="{{ $item->kode_pembayaran }}"
+                                        title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     @endif
@@ -177,8 +183,8 @@
                             <option value="pendaftaran" data-jumlah="500000" data-deskripsi="Biaya pendaftaran siswa baru">Pendaftaran - Rp 500.000</option>
                             <option value="spp_bulanan" data-jumlah="300000" data-deskripsi="Biaya SPP bulanan">SPP Bulanan - Rp 300.000</option>
                             <option value="seragam" data-jumlah="750000" data-deskripsi="Seragam sekolah lengkap">Seragam - Rp 750.000</option>
-                            <option value="ujian" data-jumlah="250000" data-deskripsi="Buku dan alat tulis">Buku & Alat Tulis - Rp 250.000</option>
-                            <option value="kegiatan" data-jumlah="100000" data-deskripsi="Biaya kegiatan sekolah">Kegiatan Sekolah - Rp 100.000</option>
+                            <option value="kitab" data-jumlah="250000" data-deskripsi="Kitab-kitab Pelajaran">Kitab-kitab Pelajaran - Rp 250.000</option>
+                            <option value="kegiatan" data-jumlah="100000" data-deskripsi="Biaya kegiatan sekolah">Kegiatan Pondok - Rp 100.000</option>
                             <option value="lainnya" data-jumlah="0" data-deskripsi="Pembayaran lainnya">Lainnya (Isi Manual)</option>
                         </select>
                     </div>
@@ -265,25 +271,72 @@
     </div>
 </div><!-- Riwayat Pembayaran -->
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="deletePembayaranModal" tabindex="-1" role="dialog" aria-labelledby="deletePembayaranModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="deletePembayaranModalLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus Data Pembayaran
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Apakah Anda yakin ingin menghapus data pembayaran ini?
+                <div class="text-center mb-3">
+                    <i class="fas fa-receipt fa-3x text-danger mb-3"></i>
+                    <h5 class="text-danger">Apakah Anda yakin ingin menghapus data pembayaran ini?</h5>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Peringatan:</strong> Tindakan ini tidak dapat dibatalkan!
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h6 class="card-title mb-0"><i class="fas fa-info-circle"></i> Detail Data yang akan dihapus:</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr>
+                                <td width="35%"><strong>Kode Pembayaran:</strong></td>
+                                <td id="delete-payment-kode" class="text-danger font-weight-bold">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Jenis Pembayaran:</strong></td>
+                                <td id="delete-payment-jenis">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nominal:</strong></td>
+                                <td id="delete-payment-nominal" class="font-weight-bold">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tanggal Transfer:</strong></td>
+                                <td id="delete-payment-tanggal">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td>
+                                    <span id="delete-payment-status" class="badge">-</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Data ini akan dihapus permanen!</strong> Pastikan Anda sudah yakin sebelum melanjutkan.
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <form id="deleteForm" method="POST" style="display: inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Hapus</button>
-                </form>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button type="button" id="confirmDeletePembayaranBtn" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Ya, Hapus Data
+                </button>
             </div>
         </div>
     </div>
@@ -336,12 +389,73 @@
                 $('#deskripsi_custom').prop('required', false);
                 $('#jumlah_custom').prop('required', false);
             }
+        }); // Handle delete payment button clicks - Show modal instead of direct delete
+        $(document).on('click', '.delete-payment-btn', function(e) {
+            e.preventDefault();
+
+            let paymentId = $(this).data('id');
+            let jenis = $(this).data('jenis');
+            let nominal = $(this).data('nominal');
+            let tanggal = $(this).data('tanggal');
+            let status = $(this).data('status');
+            let kode = $(this).data('kode');
+
+            // Populate modal with data
+            $('#delete-payment-kode').text(kode);
+            $('#delete-payment-jenis').text(jenis);
+            $('#delete-payment-nominal').text('Rp ' + nominal);
+            $('#delete-payment-tanggal').text(tanggal);
+
+            // Set status badge
+            let statusClass = status === 'approved' ? 'badge-success' : (status === 'rejected' ? 'badge-danger' : 'badge-warning');
+            let statusText = status === 'approved' ? 'Disetujui' : (status === 'rejected' ? 'Ditolak' : 'Pending');
+            $('#delete-payment-status').text(statusText).removeClass('badge-success badge-danger badge-warning').addClass(statusClass);
+
+            // Store payment ID for deletion
+            $('#confirmDeletePembayaranBtn').data('id', paymentId);
+
+            // Show modal
+            $('#deletePembayaranModal').modal('show');
         });
 
-        // Handle delete payment button clicks
-        $(document).on('click', '.delete-payment-btn', function() {
-            const id = $(this).data('id');
-            deletePayment(id);
+        // Handle confirm delete button in modal
+        $('#confirmDeletePembayaranBtn').click(function() {
+            let paymentId = $(this).data('id');
+            let button = $(this);
+
+            // Show loading state
+            button.html('<i class="fas fa-spinner fa-spin"></i> Menghapus...').prop('disabled', true);
+
+            $.ajax({
+                url: '{{ route("user.pembayaran.delete", ":id") }}'.replace(':id', paymentId),
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Hide modal first
+                        $('#deletePembayaranModal').modal('hide');
+
+                        // Show success message and reload page
+                        alert('Data pembayaran berhasil dihapus!');
+                        location.reload();
+                    } else {
+                        alert('Terjadi kesalahan: ' + (response.message || 'Unknown error'));
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'Terjadi kesalahan saat menghapus data.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    alert(errorMessage);
+                },
+                complete: function() {
+                    // Reset button state
+                    button.html('<i class="fas fa-trash"></i> Ya, Hapus Data').prop('disabled', false);
+                }
+            });
         });
 
         // File size validation
@@ -403,12 +517,6 @@
             $(this).find('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Mengunggah...');
         });
     });
-
-    function deletePayment(id) {
-        const deleteForm = document.getElementById('deleteForm');
-        deleteForm.action = '{{ route("user.pembayaran.delete", ":id") }}'.replace(':id', id);
-        $('#deleteModal').modal('show');
-    }
 
     // Helper function untuk format number
     function number_format(number) {

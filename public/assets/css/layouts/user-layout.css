@@ -1,0 +1,94 @@
+/* 
+ * User Layout CSS - Extracted from user.blade.php
+ * Fixed Sidebar Layout with Responsive Design
+ */
+
+/* Hanya sidebar yang fixed, navbar tetap normal */
+.layout-fixed .main-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow: hidden;
+    /* Tidak ada scroll di sidebar */
+    z-index: 1000;
+}
+
+/* Memastikan sidebar content tidak overflow */
+.layout-fixed .main-sidebar .sidebar {
+    height: 100vh;
+    overflow: hidden;
+    /* Tidak ada scroll internal */
+    padding-bottom: 0;
+}
+
+/* Content wrapper dengan margin untuk sidebar fixed */
+.layout-fixed .content-wrapper {
+    margin-left: 250px;
+}
+
+/* Navbar tetap normal (tidak fixed) */
+.layout-fixed .main-header {
+    margin-left: 250px;
+}
+
+/* Untuk mobile responsiveness */
+@media (max-width: 767.98px) {
+    .layout-fixed .content-wrapper {
+        margin-left: 0;
+    }
+
+    .layout-fixed .main-header {
+        margin-left: 0;
+    }
+}
+
+/* Styling untuk brand link */
+.main-sidebar .brand-link {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.content-header {
+    padding-top: 20px !important;
+    padding-bottom: 40px !important;
+}
+
+/* Content header icons styling */
+.content-header .btn-group .btn {
+    border-radius: 20px !important;
+    margin-right: 5px;
+}
+
+.content-header .dropdown-menu {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile responsive */
+@media (max-width: 767.98px) {
+    .content-header .btn-group .btn span {
+        display: none !important;
+    }
+}
+
+/* Simple user name truncation */
+.user-name-text {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+@media (max-width: 991.98px) {
+    .user-name-text {
+        max-width: 100px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .user-name-text {
+        display: none !important;
+    }
+}

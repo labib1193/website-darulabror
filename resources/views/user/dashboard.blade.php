@@ -81,4 +81,67 @@
         </div>
     </div>
 </div>
+
+<!-- Quick Actions Row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-rocket"></i>
+                    Aksi Cepat
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{{ route('user.identitas') }}" class="btn btn-primary btn-block">
+                            <i class="fas fa-id-card"></i><br>
+                            Data Identitas
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{{ route('user.orangtua') }}" class="btn btn-info btn-block">
+                            <i class="fas fa-user-friends"></i><br>
+                            Data Orangtua
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{{ route('user.dokumen') }}" class="btn btn-warning btn-block">
+                            <i class="fas fa-file-upload"></i><br>
+                            Upload Dokumen
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{{ route('user.pembayaran') }}" class="btn btn-success btn-block">
+                            <i class="fas fa-money-bill-wave"></i><br>
+                            Pembayaran
+                        </a>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <a href="{{ route('user.cetakpdf') }}" class="btn btn-danger btn-block btn-lg">
+                            <i class="fas fa-print"></i>
+                            <strong>Cetak Formulir Pendaftaran</strong>
+                        </a>
+                        <small class="text-muted d-block text-center mt-1">
+                            Download PDF formulir pendaftaran untuk dibawa saat verifikasi
+                        </small>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <a href="{{ route('user.pengaturanakun') }}" class="btn btn-secondary btn-block btn-lg">
+                            <i class="fas fa-cog"></i>
+                            <strong>Pengaturan Akun</strong>
+                        </a>
+                        <small class="text-muted d-block text-center mt-1">
+                            Kelola profil, password, dan pengaturan akun Anda
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

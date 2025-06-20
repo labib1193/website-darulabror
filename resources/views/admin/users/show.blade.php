@@ -318,7 +318,7 @@
                                         <span class="info-box-number">
                                             @php
                                             // Daftar jenis pembayaran yang wajib
-                                            $requiredPaymentTypes = ['pendaftaran', 'spp_bulanan', 'seragam', 'ujian', 'kegiatan'];
+                                            $requiredPaymentTypes = ['pendaftaran', 'spp_bulanan', 'seragam', 'kitab', 'kegiatan'];
 
                                             // Cek pembayaran user yang sudah disetujui
                                             $approvedPayments = $user->pembayaran ? $user->pembayaran->where('status_verifikasi', 'approved')->pluck('jenis_pembayaran')->toArray() : [];
@@ -329,7 +329,7 @@
                                             @if($allPaymentsComplete)
                                             <span class="badge badge-success">Lengkap</span>
                                             @else
-                                            <span class="badge badge-warning">Pending</span>
+                                            <span class="badge badge-warning">Kurang</span>
                                             @endif
                                         </span>
                                     </div>
@@ -347,20 +347,12 @@
 </section>
 @endsection
 
-@push('scripts')
-<style>
-    /* Custom style untuk memperkecil icon di statistik user */
-    .info-box-icon-small i {
-        font-size: 1.2rem !important;
-        /* Lebih kecil dari default (biasanya 1.875rem) */
-    }
+@push('css')
+<!-- Admin Custom Components -->
+<link rel="stylesheet" href="{{ asset('assets/css/admin/components.css') }}">
+@endpush
 
-    .info-box-icon-small {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-</style>
+@push('scripts')
 <script>
     // Add any custom JavaScript for user show page
     $(document).ready(function() {

@@ -60,7 +60,7 @@ class PembayaranController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'jenis_pembayaran' => 'required|in:pendaftaran,spp_bulanan,ujian,seragam,kegiatan,lainnya',
+            'jenis_pembayaran' => 'required|in:pendaftaran,spp_bulanan,ujian,kitab,seragam,kegiatan,lainnya',
             'jumlah_tagihan' => 'required|numeric|min:0',
             'nominal' => 'required|numeric|min:0',
             'bank_pengirim' => 'required|string|max:255',
@@ -101,7 +101,7 @@ class PembayaranController extends Controller
     public function update(Request $request, Pembayaran $pembayaran)
     {
         $request->validate([
-            'jenis_pembayaran' => 'required|in:pendaftaran,spp_bulanan,ujian,seragam,kegiatan,lainnya',
+            'jenis_pembayaran' => 'required|in:pendaftaran,spp_bulanan,ujian,kitab,seragam,kegiatan,lainnya',
             'jumlah_tagihan' => 'required|numeric|min:0',
             'nominal' => 'required|numeric|min:0',
             'bank_pengirim' => 'required|string|max:255',

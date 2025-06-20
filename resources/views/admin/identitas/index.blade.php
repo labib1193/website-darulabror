@@ -214,98 +214,10 @@
 @endsection
 
 @push('css')
-<style>
-    /* AdminLTE Pagination Styling */
-    .dataTables_info {
-        padding-top: 8px;
-        font-size: 0.875rem;
-        color: #6c757d;
-        font-weight: 400;
-    }
-
-    .dataTables_paginate {
-        padding-top: 0;
-    }
-
-    .dataTables_paginate .pagination {
-        margin: 0;
-        justify-content: flex-end;
-    }
-
-    .pagination .page-link {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.875rem;
-        border-color: #dee2e6;
-        color: #495057;
-        transition: all 0.15s ease-in-out;
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: #fff;
-        font-weight: 600;
-    }
-
-    .pagination .page-link:hover {
-        background-color: #e9ecef;
-        border-color: #adb5bd;
-        color: #0056b3;
-        text-decoration: none;
-    }
-
-    .pagination .page-item.disabled .page-link {
-        color: #6c757d;
-        background-color: #fff;
-        border-color: #dee2e6;
-        cursor: not-allowed;
-    }
-
-    .pagination .page-item:first-child .page-link {
-        border-top-left-radius: 0.375rem;
-        border-bottom-left-radius: 0.375rem;
-    }
-
-    .pagination .page-item:last-child .page-link {
-        border-top-right-radius: 0.375rem;
-        border-bottom-right-radius: 0.375rem;
-    }
-
-    /* Responsive pagination */
-    @media (max-width: 768px) {
-
-        .dataTables_info,
-        .dataTables_paginate {
-            text-align: center !important;
-            float: none !important;
-            margin-top: 15px;
-        }
-
-        .row .col-md-5,
-        .row .col-md-7 {
-            margin-bottom: 10px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .pagination .page-link {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-        }
-    }
-
-    /* Custom pink badge for female gender */
-    .badge-pink {
-        color: #fff;
-        background-color: #e91e63;
-        border: 1px solid #e91e63;
-    }
-
-    .badge-pink:hover {
-        background-color: #c2185b;
-        border-color: #c2185b;
-    }
-</style>
+<!-- Admin DataTables Styling -->
+<link rel="stylesheet" href="{{ asset('assets/css/admin/datatables.css') }}">
+<!-- Admin Custom Components -->
+<link rel="stylesheet" href="{{ asset('assets/css/admin/components.css') }}">
 @endpush
 
 @push('scripts')

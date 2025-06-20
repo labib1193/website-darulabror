@@ -38,7 +38,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('user.pembayaran.store');
     Route::get('/pembayaran/download/{id}', [PembayaranController::class, 'download'])->name('user.pembayaran.download');
     Route::delete('/pembayaran/{id}', [PembayaranController::class, 'delete'])->name('user.pembayaran.delete');
-    Route::post('/cetakpdf', [CetakpdfController::class, 'index'])->name('user.cetakpdf');
+    Route::get('/cetakpdf', [CetakpdfController::class, 'index'])->name('user.cetakpdf');
+    Route::post('/cetakpdf/generate', [CetakpdfController::class, 'generatePdf'])->name('user.cetakpdf.generate');
+    Route::get('/cetakpdf/preview', [CetakpdfController::class, 'previewPdf'])->name('user.cetakpdf.preview');
     Route::get('/pengaturanakun', [PengaturanController::class, 'index'])->name('user.pengaturanakun');
     Route::post('/pengaturanakun/profile', [PengaturanController::class, 'updateProfile'])->name('user.pengaturanakun.profile');
     Route::post('/pengaturanakun/password', [PengaturanController::class, 'updatePassword'])->name('user.pengaturanakun.password');

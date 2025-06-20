@@ -57,6 +57,14 @@
                     </a>
                 </li>
 
+                <!-- Cetak Formulir -->
+                <li class="nav-item">
+                    <a href="{{ route('user.cetakpdf') }}" class="nav-link {{ request()->routeIs('user.cetakpdf*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-print"></i>
+                        <p>Cetak Formulir</p>
+                    </a>
+                </li>
+
                 <!-- Pengaturan Akun -->
                 <li class="nav-item">
                     <a href="{{ route('user.pengaturanakun') }}" class="nav-link {{ request()->routeIs('user.pengaturanakun') ? 'active' : '' }}">

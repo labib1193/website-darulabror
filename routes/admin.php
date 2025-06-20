@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\OrangtuaController;
 use App\Http\Controllers\Admin\DokumenController;
 use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\SettingsController;
 
 // Redirect root admin to login
 Route::get('/', function () {
@@ -47,10 +48,8 @@ Route::middleware('admin')->group(function () {
     Route::post('pembayaran/{pembayaran}/reject', [PembayaranController::class, 'reject'])->name('pembayaran.reject');
     Route::get('pembayaran/{pembayaran}/download', [PembayaranController::class, 'download'])->name('pembayaran.download');
     Route::post('pembayaran/bulk-action', [PembayaranController::class, 'bulkAction'])->name('pembayaran.bulkAction');
-    Route::patch('pembayaran/{pembayaran}/status', [PembayaranController::class, 'updateStatus'])->name('pembayaran.updateStatus');
-
-    // Pengaturan
-    Route::get('/settings', function () {
-        return view('admin.settings');
-    })->name('settings');
+    Route::patch('pembayaran/{pembayaran}/status', [PembayaranController::class, 'updateStatus'])->name('pembayaran.updateStatus');    // Pengaturan
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+    Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile');
+    Route::post('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password');
 });

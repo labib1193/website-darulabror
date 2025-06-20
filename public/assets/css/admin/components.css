@@ -1,0 +1,40 @@
+/* 
+ * Admin Custom Components - Additional styling for admin pages
+ * Custom badges, buttons, and other unique components
+ */
+
+/* Custom pink badge for female gender - used in orangtua/index */
+.badge-pink {
+    color: #fff;
+    background-color: #e91e63;
+    border: 1px solid #e91e63;
+}
+
+.badge-pink:hover {
+    background-color: #c2185b;
+    border-color: #c2185b;
+}
+
+/* Large badge styling - used in identitas show pages */
+.badge-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Table header styling - used in identitas show pages */
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Custom style untuk memperkecil icon di statistik user - used in users show page */
+.info-box-icon-small i {
+    font-size: 1.2rem !important;
+    /* Lebih kecil dari default (biasanya 1.875rem) */
+}
+
+.info-box-icon-small {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}

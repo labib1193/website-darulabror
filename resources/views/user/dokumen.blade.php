@@ -124,8 +124,12 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'foto_ktp') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download
-                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="foto_ktp">
+                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    data-field="foto_ktp"
+                                                    data-name="Foto KTP"
+                                                    data-filename="{{ $dokumen->foto_ktp_original ?? 'foto_ktp' }}"
+                                                    data-size="{{ $dokumen->getFormattedFileSize('foto_ktp') }}"
+                                                    data-uploaded="{{ $dokumen->foto_ktp_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
                                             </div>
@@ -171,8 +175,12 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'foto_kk') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download
-                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="foto_kk">
+                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    data-field="foto_kk"
+                                                    data-name="Foto Kartu Keluarga"
+                                                    data-filename="{{ $dokumen->foto_kk_original ?? 'foto_kk' }}"
+                                                    data-size="{{ $dokumen->getFormattedFileSize('foto_kk') }}"
+                                                    data-uploaded="{{ $dokumen->foto_kk_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
                                             </div>
@@ -219,8 +227,12 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'foto_ijazah') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download
-                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="foto_ijazah">
+                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    data-field="foto_ijazah"
+                                                    data-name="Foto Ijazah Terakhir"
+                                                    data-filename="{{ $dokumen->foto_ijazah_original ?? 'foto_ijazah' }}"
+                                                    data-size="{{ $dokumen->getFormattedFileSize('foto_ijazah') }}"
+                                                    data-uploaded="{{ $dokumen->foto_ijazah_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
                                             </div>
@@ -266,8 +278,12 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'pas_foto') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download
-                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="pas_foto">
+                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    data-field="pas_foto"
+                                                    data-name="Pas Foto 3x4"
+                                                    data-filename="{{ $dokumen->pas_foto_original ?? 'pas_foto' }}"
+                                                    data-size="{{ $dokumen->getFormattedFileSize('pas_foto') }}"
+                                                    data-uploaded="{{ $dokumen->pas_foto_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
                                             </div>
@@ -319,8 +335,12 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'surat_sehat') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download
-                                                </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="surat_sehat">
+                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    data-field="surat_sehat"
+                                                    data-name="Surat Keterangan Sehat"
+                                                    data-filename="{{ $dokumen->surat_sehat_original ?? 'surat_sehat' }}"
+                                                    data-size="{{ $dokumen->getFormattedFileSize('surat_sehat') }}"
+                                                    data-uploaded="{{ $dokumen->surat_sehat_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
                                             </div>
@@ -414,9 +434,13 @@
                                 <td>
                                     @if($dokumen && $dokumen->{$doc['field']}) <div class="btn-group btn-group-sm">
                                         <a href="{{ route('user.dokumen.download', $doc['field']) }}" class="btn btn-primary">
-                                            <i class="fas fa-download"></i>
-                                        </a> <button type="button" class="btn btn-danger delete-document-btn" data-field="{{ $doc['field'] }}">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-download"></i> </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                            data-field="{{ $doc['field'] }}"
+                                            data-name="{{ $doc['name'] }}"
+                                            data-filename="{{ $dokumen->{$doc['field'] . '_original'} ?? $doc['field'] }}"
+                                            data-size="{{ $dokumen->getFormattedFileSize($doc['field']) }}"
+                                            data-uploaded="{{ $dokumen->{$doc['field'] . '_uploaded_at'}->format('d/m/Y H:i') }}">
+                                            <i class="fas fa-trash"></i> Hapus
                                         </button>
                                     </div>
                                     @else
@@ -434,25 +458,66 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="deleteDokumenModal" tabindex="-1" role="dialog" aria-labelledby="deleteDokumenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="deleteDokumenModalLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus Dokumen
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Apakah Anda yakin ingin menghapus dokumen ini?
+                <div class="text-center mb-3">
+                    <i class="fas fa-file-times fa-3x text-danger mb-3"></i>
+                    <h5 class="text-danger">Apakah Anda yakin ingin menghapus dokumen ini?</h5>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Peringatan:</strong> Tindakan ini tidak dapat dibatalkan!
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h6 class="card-title mb-0"><i class="fas fa-info-circle"></i> Detail Dokumen yang akan dihapus:</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr>
+                                <td width="35%"><strong>Jenis Dokumen:</strong></td>
+                                <td id="delete-document-name" class="text-danger font-weight-bold">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nama File:</strong></td>
+                                <td id="delete-document-filename">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ukuran File:</strong></td>
+                                <td id="delete-document-size">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tanggal Upload:</strong></td>
+                                <td id="delete-document-uploaded">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>File ini akan dihapus permanen!</strong> Pastikan Anda sudah yakin sebelum melanjutkan.
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <form id="deleteForm" method="POST" style="display: inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Hapus</button>
-                </form>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button type="button" id="confirmDeleteDokumenBtn" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Ya, Hapus Dokumen
+                </button>
             </div>
         </div>
     </div>
@@ -466,12 +531,67 @@
         $('.progress-bar[data-width]').each(function() {
             const width = $(this).data('width') + '%';
             $(this).css('width', width);
+        }); // Handle delete document button clicks - Show modal instead of direct delete
+        $(document).on('click', '.delete-document-btn', function(e) {
+            e.preventDefault();
+
+            let field = $(this).data('field');
+            let name = $(this).data('name');
+            let filename = $(this).data('filename');
+            let size = $(this).data('size');
+            let uploaded = $(this).data('uploaded');
+
+            // Populate modal with data
+            $('#delete-document-name').text(name);
+            $('#delete-document-filename').text(filename);
+            $('#delete-document-size').text(size);
+            $('#delete-document-uploaded').text(uploaded);
+
+            // Store field for deletion
+            $('#confirmDeleteDokumenBtn').data('field', field);
+
+            // Show modal
+            $('#deleteDokumenModal').modal('show');
         });
 
-        // Handle delete document button clicks
-        $(document).on('click', '.delete-document-btn', function() {
-            const field = $(this).data('field');
-            deleteDocument(field);
+        // Handle confirm delete button in modal
+        $('#confirmDeleteDokumenBtn').click(function() {
+            let field = $(this).data('field');
+            let button = $(this);
+
+            // Show loading state
+            button.html('<i class="fas fa-spinner fa-spin"></i> Menghapus...').prop('disabled', true);
+
+            $.ajax({
+                url: '{{ route("user.dokumen.delete", ":field") }}'.replace(':field', field),
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Hide modal first
+                        $('#deleteDokumenModal').modal('hide');
+
+                        // Show success message and reload page
+                        alert('Dokumen berhasil dihapus!');
+                        location.reload();
+                    } else {
+                        alert('Terjadi kesalahan: ' + (response.message || 'Unknown error'));
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'Terjadi kesalahan saat menghapus dokumen.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    alert(errorMessage);
+                },
+                complete: function() {
+                    // Reset button state
+                    button.html('<i class="fas fa-trash"></i> Ya, Hapus Dokumen').prop('disabled', false);
+                }
+            });
         });
 
         // Update label saat file dipilih
@@ -496,11 +616,5 @@
             }
         });
     });
-
-    function deleteDocument(field) {
-        const deleteForm = document.getElementById('deleteForm');
-        deleteForm.action = '{{ route("user.dokumen.delete", ":field") }}'.replace(':field', field);
-        $('#deleteModal').modal('show');
-    }
 </script>
 @endpush

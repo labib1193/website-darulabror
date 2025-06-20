@@ -322,15 +322,6 @@
 @endsection
 
 @push('css')
-<style>
-    .badge-lg {
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-    }
-
-    .table th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-    }
-</style>
+<!-- Admin Custom Components -->
+<link rel="stylesheet" href="{{ asset('assets/css/admin/components.css') }}">
 @endpush

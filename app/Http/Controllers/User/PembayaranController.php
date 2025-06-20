@@ -27,7 +27,7 @@ class PembayaranController extends Controller
     public function store(Request $request)
     {
         $validationRules = [
-            'jenis_pembayaran' => 'required|in:pendaftaran,spp_bulanan,seragam,ujian,kegiatan,lainnya',
+            'jenis_pembayaran' => 'required|in:pendaftaran,spp_bulanan,seragam,ujian,kitab,kegiatan,lainnya',
             'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'nominal' => 'required|numeric|min:1000',
             'tanggal_transfer' => 'required|date|before_or_equal:today',
@@ -141,11 +141,15 @@ class PembayaranController extends Controller
             ],
             'ujian' => [
                 'jumlah' => 250000,
-                'deskripsi' => 'Buku dan alat tulis'
+                'deskripsi' => 'Buku & Alat Tulis'
+            ],
+            'kitab' => [
+                'jumlah' => 250000,
+                'deskripsi' => 'Kitab-kitab Pelajaran'
             ],
             'kegiatan' => [
                 'jumlah' => 100000,
-                'deskripsi' => 'Biaya kegiatan sekolah'
+                'deskripsi' => 'Biaya kegiatan pondok'
             ],
             default => [
                 'jumlah' => 0,

@@ -84,9 +84,17 @@
                                         <select class="form-control @error('role') is-invalid @enderror"
                                             id="role" name="role" required>
                                             <option value="">Pilih Role</option>
-                                            <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
-                                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                                            <option value="superadmin" {{ old('role') == 'superadmin' ? 'selected' : '' }}>Super Admin</option>
+                                            @foreach($availableRoles as $role)
+                                            <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
+                                                @if($role == 'user')
+                                                User
+                                                @elseif($role == 'admin')
+                                                Admin
+                                                @elseif($role == 'superadmin')
+                                                Super Admin
+                                                @endif
+                                            </option>
+                                            @endforeach
                                         </select>
                                         @error('role')
                                         <span class="invalid-feedback" role="alert">
@@ -144,9 +152,18 @@
                                     <div class="alert alert-info">
                                         <h5><i class="icon fas fa-info"></i> Informasi Role:</h5>
                                         <ul class="mb-0">
+                                            @if(in_array('user', $availableRoles))
                                             <li><strong>User:</strong> Pengguna biasa dengan akses terbatas</li>
+                                            @endif
+                                            @if(in_array('admin', $availableRoles))
                                             <li><strong>Admin:</strong> Administrator dengan akses pengelolaan data</li>
+                                            @endif
+                                            @if(in_array('superadmin', $availableRoles))
                                             <li><strong>Super Admin:</strong> Administrator tertinggi dengan akses penuh</li>
+                                            @endif
+                                            @if(Auth::user()->role !== 'superadmin')
+                                            <li><em>Catatan: Sebagai Admin, Anda hanya dapat membuat User biasa.</em></li>
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>

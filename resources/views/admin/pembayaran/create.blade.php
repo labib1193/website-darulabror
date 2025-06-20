@@ -51,14 +51,14 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="jenis_pembayaran">Jenis Pembayaran <span class="text-danger">*</span></label>
-                                        <select class="form-control @error('jenis_pembayaran') is-invalid @enderror"
+                                        <label for="jenis_pembayaran">Jenis Pembayaran <span class="text-danger">*</span></label> <select class="form-control @error('jenis_pembayaran') is-invalid @enderror"
                                             id="jenis_pembayaran" name="jenis_pembayaran" required>
                                             <option value="">Pilih Jenis Pembayaran</option>
                                             <option value="pendaftaran" {{ old('jenis_pembayaran') == 'pendaftaran' ? 'selected' : '' }}>Pendaftaran</option>
                                             <option value="spp_bulanan" {{ old('jenis_pembayaran') == 'spp_bulanan' ? 'selected' : '' }}>SPP Bulanan</option>
                                             <option value="seragam" {{ old('jenis_pembayaran') == 'seragam' ? 'selected' : '' }}>Seragam</option>
-                                            <option value="ujian" {{ old('jenis_pembayaran') == 'ujian' ? 'selected' : '' }}>Ujian/Buku</option>
+                                            <option value="ujian" {{ old('jenis_pembayaran') == 'ujian' ? 'selected' : '' }}>Buku & Alat Tulis</option>
+                                            <option value="kitab" {{ old('jenis_pembayaran') == 'kitab' ? 'selected' : '' }}>Kitab-kitab Pelajaran</option>
                                             <option value="kegiatan" {{ old('jenis_pembayaran') == 'kegiatan' ? 'selected' : '' }}>Kegiatan</option>
                                             <option value="lainnya" {{ old('jenis_pembayaran') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                                         </select>

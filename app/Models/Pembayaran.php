@@ -134,7 +134,7 @@ class Pembayaran extends Model
             'pendaftaran' => 'PDF',
             'spp_bulanan' => 'SPP',
             'seragam' => 'SRG',
-            'ujian' => 'UJN',
+            'kitab' => 'KTB',
             'kegiatan' => 'KGT',
             'lainnya' => 'LN',
             default => 'PMB'
@@ -210,7 +210,8 @@ class Pembayaran extends Model
             'pendaftaran' => 'Biaya Pendaftaran',
             'spp_bulanan' => 'SPP Bulanan',
             'seragam' => 'Biaya Seragam',
-            'ujian' => 'Buku & Alat Tulis',
+            'ujian' => 'Buku & Alat Tulis', // Legacy support
+            'kitab' => 'Kitab-kitab Pelajaran',
             'kegiatan' => 'Biaya Kegiatan',
             'lainnya' => 'Biaya Lainnya',
             default => $this->jenis_pembayaran ?? 'Tidak Diketahui'

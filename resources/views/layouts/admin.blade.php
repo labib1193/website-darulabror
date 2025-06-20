@@ -13,143 +13,10 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}"> <!-- AdminLTE Theme style -->
-    <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css') }}"> <!-- Custom CSS for Admin Layout Without Navbar -->
-    <style>
-        /* AGGRESSIVE CSS RESET - Remove all top spacing */
-        body,
-        html {
-            margin: 0 !important;
-            padding: 0 !important;
-            height: 100vh !important;
-        }
+    <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css') }}">
 
-        .wrapper {
-            margin: 0 !important;
-            padding: 0 !important;
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-        }
-
-        /* Force content to start from absolute top */
-        body.layout-fixed .content-wrapper {
-            position: absolute !important;
-            top: 0 !important;
-            left: 250px !important;
-            right: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        /* Remove any top spacing from content header */
-        .content-wrapper .content-header {
-            padding-top: 20px !important;
-            margin-top: 0 !important;
-            padding-bottom: 40px !important;
-        }
-
-        /* Remove container fluid padding */
-        .content-header .container-fluid {
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-        }
-
-        /* Adjust row spacing */
-        .content-header .row {
-            margin-top: 0 !important;
-            margin-bottom: 0 !important;
-        }
-
-        /* Ensure no spacing from body/wrapper */
-        body.layout-fixed {
-            padding-top: 0 !important;
-        }
-
-        .wrapper {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        /* Remove any AdminLTE default navbar spacing */
-        body.layout-fixed .main-header {
-            display: none !important;
-            /* Completely hide any navbar remnants */
-        }
-
-        /* Override any AdminLTE navbar-related margins */
-        body.layout-navbar-fixed .content-wrapper,
-        body.layout-sm-navbar-fixed .content-wrapper,
-        body.layout-md-navbar-fixed .content-wrapper,
-        body.layout-lg-navbar-fixed .content-wrapper,
-        body.layout-xl-navbar-fixed .content-wrapper {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        /* Sidebar adjustment - stick to very top */
-        body.layout-fixed .main-sidebar {
-            position: fixed;
-            top: 0 !important;
-            height: 100vh;
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        /* Remove brand link top spacing */
-        .main-sidebar .brand-link {
-            margin-top: 0 !important;
-            padding-top: 10px !important;
-        }
-
-        /* Hide preloader completely */
-        .preloader {
-            display: none !important;
-        }
-
-        /* Ensure h1 title has no top margin */
-        .content-header h1 {
-            margin-top: 0 !important;
-            padding-top: 5px !important;
-        }
-
-        /* Content header icons styling */
-        .content-header .btn-group .btn {
-            border-radius: 20px !important;
-            margin-right: 5px;
-        }
-
-        .content-header .dropdown-menu {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .content-header .badge-pill {
-            font-size: 0.7rem;
-        }
-
-        /* Notification dropdown styling */
-        .dropdown-menu .media {
-            padding: 0.5rem 1rem;
-        }
-
-        .dropdown-menu .media .img-size-50 {
-            width: 40px;
-            height: 40px;
-        }
-
-        /* Mobile responsive */
-        @media (max-width: 767.98px) {
-            body.layout-fixed .content-wrapper {
-                margin-left: 0;
-            }
-
-            .content-header .btn-group .btn span {
-                display: none !important;
-            }
-        }
-    </style>
+    <!-- Custom Admin Layout CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/layouts/admin-layout.css') }}">
 
     <!-- Custom CSS -->
     @stack('css')
@@ -255,72 +122,16 @@
                             <h1 class="m-0">@yield('page-title', 'Dashboard')</h1>
                         </div>
                         <div class="col-sm-4">
-                            <!-- Notification and Message Icons -->
+                            <!-- User Menu Only -->
                             <div class="float-right">
-                                <!-- Notifications -->
-                                <div class="btn-group mr-2">
-                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-bell"></i>
-                                        <span class="badge badge-warning badge-pill ml-1">15</span>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <div class="dropdown-header">15 Notifikasi</div>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="fas fa-users mr-2"></i> 8 pendaftar baru
-                                            <span class="float-right text-muted text-sm">5 menit</span>
-                                        </a>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="fas fa-money-bill mr-2"></i> 3 pembayaran baru
-                                            <span class="float-right text-muted text-sm">15 menit</span>
-                                        </a>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="fas fa-file-alt mr-2"></i> 4 dokumen pending
-                                            <span class="float-right text-muted text-sm">1 jam</span>
-                                        </a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item dropdown-footer" href="#">Lihat Semua Notifikasi</a>
-                                    </div>
-                                </div>
-
-                                <!-- Messages -->
-                                <div class="btn-group mr-2">
-                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-comments"></i>
-                                        <span class="badge badge-info badge-pill ml-1">3</span>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <div class="dropdown-header">3 Pesan</div>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="media">
-                                                <img src="{{ asset('AdminLTE/dist/img/user1-128x128.jpg') }}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-                                                <div class="media-body">
-                                                    <h3 class="dropdown-item-title">
-                                                        Ahmad Santri
-                                                        <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                                                    </h3>
-                                                    <p class="text-sm">Pertanyaan tentang pembayaran...</p>
-                                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 2 jam yang lalu</p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item dropdown-footer" href="#">Lihat Semua Pesan</a>
-                                    </div>
-                                </div>
-
                                 <!-- User Menu -->
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="userMenuDropdown">
                                         <i class="fas fa-user"></i>
                                         <span class="d-none d-md-inline ml-1">{{ Auth::user()->name ?? 'Admin' }}</span>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#">
-                                            <i class="fas fa-user mr-2"></i> Profile
-                                        </a>
-                                        <a class="dropdown-item" href="#">
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenuDropdown">
+                                        <a class="dropdown-item" href="{{ route('admin.settings') }}">
                                             <i class="fas fa-cogs mr-2"></i> Pengaturan
                                         </a>
                                         <div class="dropdown-divider"></div>
@@ -382,8 +193,13 @@
     <script src="{{ asset('AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <!-- ChartJS -->
     <script src="{{ asset('AdminLTE/plugins/chart.js/Chart.min.js') }}"></script> <!-- AdminLTE App -->
-    <script src="{{ asset('AdminLTE/dist/js/adminlte.js') }}"></script>
-    <!-- Custom JS -->
+    <script src="{{ asset('AdminLTE/dist/js/adminlte.js') }}"></script> <!-- Custom JS -->
+    <script>
+        $(document).ready(function() {
+            // Initialize Bootstrap dropdowns
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
     @stack('js')
     @stack('scripts')
 </body>

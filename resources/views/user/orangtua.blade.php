@@ -235,8 +235,13 @@
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-outline-primary btn-edit" data-id="{{ $orangtua->id }}" title="Edit">
                                             <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="{{ $orangtua->id }}" data-name="{{ $orangtua->nama_lengkap }}" title="Hapus">
+                                        </button> <button type="button" class="btn btn-sm btn-outline-danger btn-delete"
+                                            data-id="{{ $orangtua->id }}"
+                                            data-name="{{ $orangtua->nama_lengkap }}"
+                                            data-status="{{ $orangtua->status }}"
+                                            data-nik="{{ $orangtua->nik }}"
+                                            data-hp="{{ $orangtua->no_hp_1 }}"
+                                            title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -330,6 +335,74 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteOrangtuaModal" tabindex="-1" role="dialog" aria-labelledby="deleteOrangtuaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="deleteOrangtuaModalLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus Data Orangtua
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-users fa-3x text-danger mb-3"></i>
+                    <h5 class="text-danger">Apakah Anda yakin ingin menghapus data orangtua ini?</h5>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Peringatan:</strong> Tindakan ini tidak dapat dibatalkan!
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h6 class="card-title mb-0"><i class="fas fa-info-circle"></i> Detail Data yang akan dihapus:</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr>
+                                <td width="30%"><strong>Nama Lengkap:</strong></td>
+                                <td id="delete-orangtua-name" class="text-danger font-weight-bold">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td>
+                                    <span id="delete-orangtua-status" class="badge badge-secondary">-</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>NIK:</strong></td>
+                                <td id="delete-orangtua-nik">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>No. HP:</strong></td>
+                                <td id="delete-orangtua-hp">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Data ini akan dihapus permanen!</strong> Pastikan Anda sudah yakin sebelum melanjutkan.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Ya, Hapus Data
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -381,43 +454,69 @@
                 // Reset button state
                 $('.btn-edit[data-id="' + orangtuaId + '"]').html('<i class="fas fa-edit"></i>').prop('disabled', false);
             });
-        });
+        }); // Delete button - Show modal instead of confirm
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
 
-        // Delete button
-        $(document).on('click', '.btn-delete', function() {
             let orangtuaId = $(this).data('id');
             let orangtuaName = $(this).data('name');
+            let status = $(this).data('status');
+            let nik = $(this).data('nik');
+            let hp = $(this).data('hp');
 
-            // Show confirmation with custom styling
-            if (confirm('⚠️ KONFIRMASI HAPUS\n\nApakah Anda yakin ingin menghapus data:\n"' + orangtuaName + '"\n\nData yang dihapus tidak dapat dikembalikan!')) {
-                // Show loading state
-                $(this).html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
-                $.ajax({
-                    url: '{{ route("user.orangtua.destroy", ":id") }}'.replace(':id', orangtuaId),
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Animate card removal
-                            $('#orangtua-card-' + orangtuaId).fadeOut(300, function() {
-                                $(this).remove();
-                                // Check if no more data
-                                if ($('#data-orangtua-list .card').length === 0) {
-                                    window.location.reload();
-                                }
-                            });
-                            showNotification(response.message, 'success');
-                        }
-                    },
-                    error: function() {
-                        showNotification('Terjadi kesalahan saat menghapus data.', 'danger');
-                        // Reset button state
-                        $('.btn-delete[data-id="' + orangtuaId + '"]').html('<i class="fas fa-trash"></i>').prop('disabled', false);
+            // Populate modal with data
+            $('#delete-orangtua-name').text(orangtuaName);
+            $('#delete-orangtua-status').text(status).removeClass('badge-secondary badge-primary badge-pink')
+                .addClass(status === 'Ayah' ? 'badge-primary' : 'badge-pink');
+            $('#delete-orangtua-nik').text(nik || '-');
+            $('#delete-orangtua-hp').text(hp || '-');
+
+            // Store orangtua ID for deletion
+            $('#confirmDeleteBtn').data('id', orangtuaId);
+
+            // Show modal
+            $('#deleteOrangtuaModal').modal('show');
+        });
+
+        // Handle confirm delete button in modal
+        $('#confirmDeleteBtn').click(function() {
+            let orangtuaId = $(this).data('id');
+            let button = $(this);
+
+            // Show loading state
+            button.html('<i class="fas fa-spinner fa-spin"></i> Menghapus...').prop('disabled', true);
+
+            $.ajax({
+                url: '{{ route("user.orangtua.destroy", ":id") }}'.replace(':id', orangtuaId),
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Hide modal first
+                        $('#deleteOrangtuaModal').modal('hide');
+
+                        // Animate card removal
+                        $('#orangtua-card-' + orangtuaId).fadeOut(300, function() {
+                            $(this).remove();
+                            // Check if no more data
+                            if ($('#data-orangtua-list .card').length === 0) {
+                                window.location.reload();
+                            }
+                        });
+
+                        showNotification(response.message, 'success');
                     }
-                });
-            }
+                },
+                error: function() {
+                    showNotification('Terjadi kesalahan saat menghapus data.', 'danger');
+                },
+                complete: function() {
+                    // Reset button state
+                    button.html('<i class="fas fa-trash"></i> Ya, Hapus Data').prop('disabled', false);
+                }
+            });
         });
 
         // Hide form when "Batal" button is clicked
