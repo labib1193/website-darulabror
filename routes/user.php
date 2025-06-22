@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\User\Auth\UserAuthController;
+use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\IdentitasController;
 use App\Http\Controllers\OrangtuaController;
 use App\Http\Controllers\User\DokumenController;
@@ -20,9 +21,7 @@ Route::middleware(['guest'])->group(function () {
 
 // Route yang butuh login
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('user.dashboard');
-    })->name('user.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
     Route::get('/identitas', [IdentitasController::class, 'index'])->name('user.identitas');
     Route::post('/identitas', [IdentitasController::class, 'update'])->name('user.identitas.update');
     Route::get('/orangtua', [OrangtuaController::class, 'index'])->name('user.orangtua');

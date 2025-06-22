@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Pembayaran')
+@section('title', 'Tambah Pembayaran - ')
 
 @section('content')
 <div class="content-header">

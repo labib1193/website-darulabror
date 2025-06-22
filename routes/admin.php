@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DokumenController;
 use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\ContactController;
 
 // Redirect root admin to login
 Route::get('/', function () {
@@ -48,7 +49,11 @@ Route::middleware('admin')->group(function () {
     Route::post('pembayaran/{pembayaran}/reject', [PembayaranController::class, 'reject'])->name('pembayaran.reject');
     Route::get('pembayaran/{pembayaran}/download', [PembayaranController::class, 'download'])->name('pembayaran.download');
     Route::post('pembayaran/bulk-action', [PembayaranController::class, 'bulkAction'])->name('pembayaran.bulkAction');
-    Route::patch('pembayaran/{pembayaran}/status', [PembayaranController::class, 'updateStatus'])->name('pembayaran.updateStatus');    // Pengaturan
+    Route::patch('pembayaran/{pembayaran}/status', [PembayaranController::class, 'updateStatus'])->name('pembayaran.updateStatus');    // Kritik & Saran
+    Route::resource('contact', ContactController::class)->only(['index', 'show', 'destroy']);
+    Route::patch('contact/{contact}/mark-as-read', [ContactController::class, 'markAsRead'])->name('contact.markAsRead');
+    Route::post('contact/mark-all-as-read', [ContactController::class, 'markAllAsRead'])->name('contact.markAllAsRead');
+    Route::post('contact/destroy-multiple', [ContactController::class, 'destroyMultiple'])->name('contact.destroyMultiple');    // Pengaturan
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile');
     Route::post('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password');

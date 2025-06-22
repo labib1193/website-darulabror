@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Data Orangtua')
+@section('title', 'Edit Data Orangtua - ')
 @section('page-title', 'Edit Data Orangtua')
 
 @section('breadcrumb')

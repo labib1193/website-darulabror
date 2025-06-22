@@ -39,7 +39,7 @@
                 <li class="nav-item">
                     <a href="{{ route('user.orangtua') }}" class="nav-link {{ request()->routeIs('user.orangtua') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
-                        <p>Data Orangtua</p>
+                        <p>Data Orangtua/Wali</p>
                     </a>
                 </li>
 

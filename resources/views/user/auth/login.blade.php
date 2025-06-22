@@ -16,6 +16,7 @@
         {{-- Notifikasi Session Expired --}}
         @if (isset($message))
         <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <i class="fas fa-clock"></i> {{ $message }}
         </div>
         @endif
@@ -23,6 +24,7 @@
         {{-- Notifikasi Sukses --}}
         @if (session('success'))
         <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             {{ session('success') }}
         </div>
         @endif
@@ -30,6 +32,7 @@
         {{-- Error Messages --}}
         @if ($errors->any())
         <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             {{ $errors->first() }}
         </div>
         @endif
@@ -73,7 +76,7 @@
             <a href="#">Lupa password?</a>
         </p>
         <p class="mb-0">
-            <a href="{{ route('user.auth.register') }}" class="text-center">Belum punya akun? Daftar di sini</a>
+            Belum punya akun?<a href="{{ route('user.auth.register') }}" class="text-center"> Daftar di sini</a>
         </p>
 
         <hr>

@@ -16,6 +16,7 @@
         {{-- Error Messages --}}
         @if ($errors->any())
         <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             {{ $errors->first() }}
         </div>
         @endif
@@ -74,7 +75,7 @@
         </form>
 
         <p class="mb-0 mt-3">
-            <a href="{{ route('user.auth.login') }}" class="text-center">Sudah punya akun? Masuk di sini</a>
+            Sudah punya akun?<a href="{{ route('user.auth.login') }}" class="text-center"> Masuk di sini</a>
         </p>
 
         <hr>

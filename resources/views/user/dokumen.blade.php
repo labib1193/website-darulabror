@@ -124,7 +124,10 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'foto_ktp') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                                @if($dokumen->status_verifikasi !== 'approved')
+                                                <button type="button" class="btn btn-danger delete-document-btn"
                                                     data-field="foto_ktp"
                                                     data-name="Foto KTP"
                                                     data-filename="{{ $dokumen->foto_ktp_original ?? 'foto_ktp' }}"
@@ -132,6 +135,11 @@
                                                     data-uploaded="{{ $dokumen->foto_ktp_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
+                                                @else
+                                                <span class="btn btn-secondary btn-sm disabled">
+                                                    <i class="fas fa-lock"></i> Terverifikasi
+                                                </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -175,7 +183,10 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'foto_kk') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                                @if($dokumen->status_verifikasi !== 'approved')
+                                                <button type="button" class="btn btn-danger delete-document-btn"
                                                     data-field="foto_kk"
                                                     data-name="Foto Kartu Keluarga"
                                                     data-filename="{{ $dokumen->foto_kk_original ?? 'foto_kk' }}"
@@ -183,6 +194,11 @@
                                                     data-uploaded="{{ $dokumen->foto_kk_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
+                                                @else
+                                                <span class="btn btn-secondary btn-sm disabled">
+                                                    <i class="fas fa-lock"></i> Terverifikasi
+                                                </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -227,13 +243,22 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'foto_ijazah') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                                @if($dokumen->status_verifikasi !== 'approved')
+                                                <button type="button" class="btn btn-danger delete-document-btn"
                                                     data-field="foto_ijazah"
                                                     data-name="Foto Ijazah Terakhir"
                                                     data-filename="{{ $dokumen->foto_ijazah_original ?? 'foto_ijazah' }}"
                                                     data-size="{{ $dokumen->getFormattedFileSize('foto_ijazah') }}"
                                                     data-uploaded="{{ $dokumen->foto_ijazah_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                                @else
+                                                <span class="btn btn-secondary btn-sm disabled">
+                                                    <i class="fas fa-lock"></i> Terverifikasi
+                                                </span>
+                                                @endif
                                                 </button>
                                             </div>
                                         </div>
@@ -278,7 +303,10 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'pas_foto') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                                @if($dokumen->status_verifikasi !== 'approved')
+                                                <button type="button" class="btn btn-danger delete-document-btn"
                                                     data-field="pas_foto"
                                                     data-name="Pas Foto 3x4"
                                                     data-filename="{{ $dokumen->pas_foto_original ?? 'pas_foto' }}"
@@ -286,6 +314,11 @@
                                                     data-uploaded="{{ $dokumen->pas_foto_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
+                                                @else
+                                                <span class="btn btn-secondary btn-sm disabled">
+                                                    <i class="fas fa-lock"></i> Terverifikasi
+                                                </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -335,7 +368,10 @@
                                         <div class="text-center">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ route('user.dokumen.download', 'surat_sehat') }}" class="btn btn-primary">
-                                                    <i class="fas fa-download"></i> Download </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                                @if($dokumen->status_verifikasi !== 'approved')
+                                                <button type="button" class="btn btn-danger delete-document-btn"
                                                     data-field="surat_sehat"
                                                     data-name="Surat Keterangan Sehat"
                                                     data-filename="{{ $dokumen->surat_sehat_original ?? 'surat_sehat' }}"
@@ -343,6 +379,11 @@
                                                     data-uploaded="{{ $dokumen->surat_sehat_uploaded_at->format('d/m/Y H:i') }}">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
+                                                @else
+                                                <span class="btn btn-secondary btn-sm disabled">
+                                                    <i class="fas fa-lock"></i> Terverifikasi
+                                                </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -432,9 +473,13 @@
                                     {{ $dokumen && $dokumen->{$doc['field'] . '_uploaded_at'} ? $dokumen->{$doc['field'] . '_uploaded_at'}->format('d/m/Y H:i') : '-' }}
                                 </td>
                                 <td>
-                                    @if($dokumen && $dokumen->{$doc['field']}) <div class="btn-group btn-group-sm">
+                                    @if($dokumen && $dokumen->{$doc['field']})
+                                    <div class="btn-group btn-group-sm">
                                         <a href="{{ route('user.dokumen.download', $doc['field']) }}" class="btn btn-primary">
-                                            <i class="fas fa-download"></i> </a> <button type="button" class="btn btn-danger delete-document-btn"
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                        @if($dokumen->status_verifikasi !== 'approved')
+                                        <button type="button" class="btn btn-danger delete-document-btn"
                                             data-field="{{ $doc['field'] }}"
                                             data-name="{{ $doc['name'] }}"
                                             data-filename="{{ $dokumen->{$doc['field'] . '_original'} ?? $doc['field'] }}"
@@ -442,6 +487,11 @@
                                             data-uploaded="{{ $dokumen->{$doc['field'] . '_uploaded_at'}->format('d/m/Y H:i') }}">
                                             <i class="fas fa-trash"></i> Hapus
                                         </button>
+                                        @else
+                                        <span class="btn btn-secondary btn-sm disabled">
+                                            <i class="fas fa-lock"></i> Terverifikasi
+                                        </span>
+                                        @endif
                                     </div>
                                     @else
                                     <span class="text-muted">-</span>

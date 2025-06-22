@@ -16,20 +16,23 @@
     gap: 30px;
     background-color: var(--light-gray);
     padding: 3rem 0;
-    margin-top: 80px;
+    margin-top: 0px;
 }
 
 .profil .section-pimpinan .image-container img {
-    width: 100%;
+    margin-top: 100px;
+    width: 400px;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 5%;
     max-width: 350px;
-    border-radius: 20px;
     box-shadow: 0 8px 20px rgba(17, 101, 48, 0.1);
     transition: transform 0.3s ease;
 }
 
 .profil .section-pimpinan .image-container img:hover {
     transform: scale(1.02);
-}
+} */
 
 .profil .nama-pimpinan {
     background-color: var(--primary-color);
@@ -46,7 +49,8 @@
 
 .profil .text-container {
     max-width: 600px;
-    padding: 20px;
+    padding: 0px;
+    margin-left: 70px;
 }
 
 .profil .text-container h3 {
@@ -56,7 +60,7 @@
 }
 
 .profil .text-container p {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.8;
     color: #555;
     font-weight: 400;

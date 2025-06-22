@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit User')
+@section('title', 'Edit User - ')
 
 @section('content')
 <div class="content-header">

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Data Orangtua')
+@section('title', 'Data Orangtua - ')
 @section('page-title', 'Data Orangtua')
 
 @section('breadcrumb')
@@ -44,14 +44,13 @@
                             <tr>
                                 <th>No</th>
                                 <th>User</th>
-                                <th>Nama Lengkap</th>
+                                <th>Nama</th>
                                 <th>Status</th>
                                 <th>Jenis Kelamin</th>
                                 <th>No. HP</th>
                                 <th>Pekerjaan</th>
-                                <th>Penghasilan</th>
                                 <th>Alamat</th>
-                                <th width="200px">Aksi</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,7 +63,7 @@
                                 </td>
                                 <td>{{ $item->nama_lengkap }}</td>
                                 <td>
-                                    <span class="badge badge-primary">{{ $item->status }}</span>
+                                    <span class="badge badge-success">{{ $item->status }}</span>
                                 </td>
                                 <td>
                                     @if($item->jenis_kelamin == 'Laki-laki')
@@ -77,7 +76,6 @@
                                 </td>
                                 <td>{{ $item->no_hp_1 ?? '-' }}</td>
                                 <td>{{ $item->pekerjaan ?? '-' }}</td>
-                                <td>{{ $item->penghasilan ?? '-' }}</td>
                                 <td>
                                     @if($item->alamat_lengkap)
                                     {{ Str::limit($item->alamat_lengkap, 50) }}

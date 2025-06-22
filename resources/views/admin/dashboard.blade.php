@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard Admin')
+@section('title')
 @section('page-title', 'Dashboard')
 
 @section('breadcrumb')
@@ -9,6 +9,54 @@
 
 @push('css')
 <!-- Add any custom CSS for dashboard -->
+<style>
+    /* Profile image consistency fixes */
+    .users-list>li>img {
+        border-radius: 50%;
+        width: 60px !important;
+        height: 60px !important;
+        object-fit: cover;
+        object-position: center;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-panel .image img {
+        width: 35px !important;
+        height: 35px !important;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    /* Responsive user list */
+    @media (max-width: 767px) {
+        .users-list>li {
+            width: 50% !important;
+        }
+
+        .users-list>li>img {
+            width: 50px !important;
+            height: 50px !important;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .users-list>li {
+            width: 100% !important;
+        }
+    }
+
+    /* Better layout for user list names */
+    .users-list .users-list-name {
+        font-weight: 600;
+        color: #495057;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -170,10 +218,14 @@
                 </div>
             </div>
             <div class="card-body p-0">
-                <ul class="users-list clearfix"> @forelse($recentUsers ?? [] as $user)
-                    <li>
-                        <img src="{{ $user->profile_photo_url }}" alt="User Image">
-                        <a class="users-list-name" href="#">{{ $user->name }}</a>
+                <ul class="users-list clearfix"> @forelse($recentUsers ?? [] as $user) <li>
+                        <img src="{{ $user->profile_photo_url ?? asset('AdminLTE/dist/img/user2-160x160.jpg') }}"
+                            alt="{{ $user->name }}"
+                            title="{{ $user->name }}"
+                            class="user-profile-img"
+                            data-fallback="{{ asset('AdminLTE/dist/img/user2-160x160.jpg') }}"
+                            loading="lazy">
+                        <a class="users-list-name" href="#" title="{{ $user->name }}">{{ Str::limit($user->name, 12) }}</a>
                         <span class="users-list-date">{{ $user->created_at->format('d M') }}</span>
                     </li>
                     @empty
@@ -199,6 +251,14 @@
     $(function() {
         // Initialize tooltips
         $('[data-toggle="tooltip"]').tooltip();
+
+        // Handle profile image fallback
+        $('.user-profile-img').on('error', function() {
+            const fallbackUrl = $(this).data('fallback');
+            if (this.src !== fallbackUrl) {
+                this.src = fallbackUrl;
+            }
+        });
 
         // Auto refresh setiap 5 menit untuk data terbaru
         setInterval(function() {

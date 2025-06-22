@@ -234,17 +234,6 @@
                     </div>
                 </div>
 
-                <!-- Alamat Lengkap -->
-                <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">
-                        Alamat Lengkap <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-sm-9">
-                        <textarea name="alamat_lengkap" class="form-control editable-field" readonly
-                            rows="3" placeholder="Alamat lengkap termasuk RT/RW">{{ $identitas->alamat_lengkap ?? '' }}</textarea>
-                    </div>
-                </div>
-
                 <!-- Desa/Kelurahan -->
                 <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">
@@ -254,6 +243,18 @@
                         <input type="text" name="desa" class="form-control editable-field" readonly
                             value="{{ $identitas->desa ?? '' }}"
                             placeholder="Desa/Kelurahan">
+                    </div>
+                </div>
+
+
+                <!-- Alamat Lengkap -->
+                <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">
+                        Alamat Lengkap <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-9">
+                        <textarea name="alamat_lengkap" class="form-control editable-field" readonly
+                            rows="3" placeholder="Alamat lengkap termasuk RT/RW">{{ $identitas->alamat_lengkap ?? '' }}</textarea>
                     </div>
                 </div>
 

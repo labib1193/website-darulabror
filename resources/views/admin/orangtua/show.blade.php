@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Data Orangtua')
+@section('title', 'Detail Data Orangtua - ')
 @section('page-title', 'Detail Data Orangtua')
 
 @section('breadcrumb')
@@ -48,7 +48,7 @@
                         <table class="table table-borderless">
                             <tr>
                                 <td width="150"><strong>Status:</strong></td>
-                                <td><span class="badge badge-primary">{{ $orangtua->status }}</span></td>
+                                <td><span class="badge badge-success">{{ $orangtua->status }}</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Jenis Kelamin:</strong></td>

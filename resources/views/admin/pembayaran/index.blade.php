@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Data Pembayaran')
+@section('title', 'Data Pembayaran - ')
 @section('page-title', 'Data Pembayaran')
 
 @section('breadcrumb')

@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Cetak Formulir Pendaftaran')
+@section('title', 'Cetak Pendaftaran - Dashboard Santri')
 @section('page-title', 'Cetak Formulir Pendaftaran')
 
 @section('content')

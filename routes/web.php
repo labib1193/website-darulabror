@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Public\ContactController;
+use App\Http\Controllers\Public\BeritaController;
 
 // ✅ Authentication fallback route
 Route::get('/login', function () {
@@ -26,9 +28,8 @@ Route::get('/profil', function () {
     return view('public.profil');
 })->name('profil');
 
-Route::get('/berita', function () {
-    return view('public.berita');
-})->name('berita');
+Route::get('/berita', [BeritaController::class, 'index'])->name('berita');
+Route::get('/berita/{slug}', [BeritaController::class, 'show'])->name('berita.detail');
 
 Route::get('/ekstrakurikuler', function () {
     return view('public.ekstrakurikuler');
@@ -45,3 +46,6 @@ Route::get('galeri', function () {
 Route::get('/pendaftaran', function () {
     return view('public.pendaftaran');
 })->name('pendaftaran');
+
+// ✅ Contact form route
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');

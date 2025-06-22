@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Data Identitas')
+@section('title', 'Tambah Data Identitas - ')
 @section('page-title', 'Tambah Data Identitas')
 
 @section('breadcrumb')

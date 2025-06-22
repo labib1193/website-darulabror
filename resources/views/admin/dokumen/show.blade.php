@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Dokumen')
+@section('title', 'Detail Dokumen - ')
 @section('page-title', 'Detail Dokumen')
 
 @section('breadcrumb')

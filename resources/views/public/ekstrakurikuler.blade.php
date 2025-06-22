@@ -24,7 +24,7 @@
                         <div class="ekskul-card card h-100 border-0 shadow-sm">
                             <div class="row g-0">
                                 <div class="col-md-6">
-                                    <img src="{{ asset('images/tahfid.jpg') }}" class="img-fluid rounded-start h-100" alt="Tahfidz" style="object-fit: cover;">
+                                    <img src="{{ asset('assets/images/public/ekstrakurikuler/eskul1.jpg') }}" class="img-fluid rounded-start h-100" alt="Tahfidz" style="object-fit: cover;">
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
@@ -45,7 +45,7 @@
                         <div class="ekskul-card card h-100 border-0 shadow-sm">
                             <div class="row g-0">
                                 <div class="col-md-6">
-                                    <img src="{{ asset('images/hadroh.jpg') }}" class="img-fluid rounded-start h-100" alt="Hadroh" style="object-fit: cover;">
+                                    <img src="{{ asset('assets/images/public/ekstrakurikuler/eskul2.jpg') }}" class="img-fluid rounded-start h-100" alt="Hadroh" style="object-fit: cover;">
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
@@ -72,7 +72,7 @@
                         <div class="ekskul-card card h-100 border-0 shadow-sm">
                             <div class="row g-0">
                                 <div class="col-md-6">
-                                    <img src="{{ asset('images/silat.jpg') }}" class="img-fluid rounded-start h-100" alt="Pencak Silat" style="object-fit: cover;">
+                                    <img src="{{ asset('assets/images/public/ekstrakurikuler/eskul3.jpg') }}" class="img-fluid rounded-start h-100" alt="Pencak Silat" style="object-fit: cover;">
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
@@ -93,7 +93,7 @@
                         <div class="ekskul-card card h-100 border-0 shadow-sm">
                             <div class="row g-0">
                                 <div class="col-md-6">
-                                    <img src="{{ asset('images/futsal.jpg') }}" class="img-fluid rounded-start h-100" alt="Futsal" style="object-fit: cover;">
+                                    <img src="{{ asset('assets/images/public/ekstrakurikuler/eskul4.jpg') }}" class="img-fluid rounded-start h-100" alt="Futsal" style="object-fit: cover;">
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
@@ -112,7 +112,7 @@
             </div>
 
             <!-- Call to Action -->
-            <div class="cta-section text-center py-5">
+            <!-- <div class="cta-section text-center py-5">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <h3 class="fw-bold mb-4">Tertarik dengan Program Ekstrakurikuler Kami?</h3>
@@ -120,12 +120,12 @@
                         <a href="{{ route('pendaftaran') }}" class="btn btn-primary btn-lg">Daftar Sekarang</a>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
 
     <!-- Achievements Section -->
-    <section class="achievements py-5 bg-light">
+    <!-- <section class="achievements py-5 bg-light">
         <div class="container">
             <h3 class="text-center fw-bold mb-5">Prestasi Ekstrakurikuler</h3>
             <div class="row g-4 justify-content-center">
@@ -159,6 +159,6 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 </div>
 @endsection

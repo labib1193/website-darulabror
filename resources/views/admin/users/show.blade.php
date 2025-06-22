@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail User')
+@section('title', 'Detail User - ')
 
 @section('content')
 <div class="content-header">
@@ -298,10 +298,9 @@
                             <div class="col-md-3 col-sm-6 col-12">
                                 <div class="info-box">
                                     <span class="info-box-icon bg-warning info-box-icon-small"><i class="fas fa-file"></i></span>
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Dokumen</span>
+                                    <div class="info-box-content"> <span class="info-box-text">Dokumen</span>
                                         <span class="info-box-number">
-                                            @if($user->dokumen)
+                                            @if($user->dokumen && $user->dokumen->status_verifikasi === 'approved')
                                             <span class="badge badge-success">Lengkap</span>
                                             @else
                                             <span class="badge badge-warning">Belum Ada</span>

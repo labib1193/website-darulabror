@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Data Identitas')
+@section('title', 'Data Identitas - ')
 @section('page-title', 'Data Identitas')
 
 @section('breadcrumb')
@@ -63,7 +63,7 @@
                                 <th>Jenis Kelamin</th>
                                 <th>No. HP</th>
                                 <th>Status</th>
-                                <th width="200px">Aksi</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

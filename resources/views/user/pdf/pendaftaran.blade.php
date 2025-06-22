@@ -355,8 +355,7 @@
             </tr>
             <tr>
                 <td class="label">Pembayaran</td>
-                <td class="value">
-                    @if($user->pembayaran && $user->pembayaran->count() > 0)
+                <td class="value"> @if($user->pembayaran && $user->pembayaran->where('status_verifikasi', 'approved')->count() > 0)
                     <span class="status-badge status-verified">Lunas</span>
                     @else
                     <span class="status-badge status-pending">Belum Lunas</span>

@@ -118,18 +118,40 @@ class DokumenController extends Controller
         $dokumen = $user->dokumen;
 
         if (!$dokumen) {
-            return redirect()->back()->with('error', 'Data dokumen tidak ditemukan.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Data dokumen tidak ditemukan.'
+            ], 404);
+        }
+
+        // Check if document is already verified - prevent deletion if approved
+        if ($dokumen->status_verifikasi === 'approved') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dokumen yang sudah diverifikasi tidak dapat dihapus. Silakan hubungi admin jika perlu perubahan.'
+            ], 403);
         }
 
         $allowedFields = ['foto_ktp', 'foto_ijazah', 'surat_sehat', 'foto_kk', 'pas_foto'];
 
         if (!in_array($field, $allowedFields)) {
-            return redirect()->back()->with('error', 'Field dokumen tidak valid.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Field dokumen tidak valid.'
+            ], 400);
+        }
+
+        // Check if the specific field has a file
+        if (!$dokumen->$field) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dokumen tidak ditemukan.'
+            ], 404);
         }
 
         // Delete file from storage
-        if ($dokumen->$field && Storage::exists($dokumen->$field)) {
-            Storage::delete($dokumen->$field);
+        if ($dokumen->$field && Storage::disk('public')->exists($dokumen->$field)) {
+            Storage::disk('public')->delete($dokumen->$field);
         }
 
         // Clear dokumen data
@@ -139,7 +161,10 @@ class DokumenController extends Controller
         $dokumen->{$field . '_uploaded_at'} = null;
         $dokumen->save();
 
-        return redirect()->back()->with('success', 'Dokumen berhasil dihapus.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Dokumen berhasil dihapus.'
+        ]);
     }
 
     /**

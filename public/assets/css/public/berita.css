@@ -10,12 +10,23 @@
    ================================ */
 .berita .hero-section {
     background: linear-gradient(135deg, var(--primary-color) 0%, #004d1f 100%);
-    padding: 80px 0;
+    padding: 40px 0;
 }
 
 .berita .search-box {
     max-width: 600px;
     margin: 0 auto;
+}
+
+.berita .search-box .btncari {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 0px;
+    padding: 0px 20px;
+}
+
+.berita .search-box .btncari:hover {
+    background-color: var(--secondary-color);
 }
 
 .berita .category-nav .btn-outline-primary {

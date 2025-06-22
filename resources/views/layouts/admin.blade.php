@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin Dashboard') - Darul Abror</title>
+    <title>@yield('title')Dashboard Admin</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> <!-- Font Awesome -->
@@ -13,13 +13,26 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}"> <!-- AdminLTE Theme style -->
-    <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css') }}">
-
-    <!-- Custom Admin Layout CSS -->
+    <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css') }}"> <!-- Custom Admin Layout CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/layouts/admin-layout.css') }}">
+
+    <!-- Custom Admin CSS -->
+    @vite(['resources/css/admin.css'])
 
     <!-- Custom CSS -->
     @stack('css')
+
+    <!-- Profile Image Consistency CSS -->
+    <style>
+        .user-panel .image img {
+            width: 35px !important;
+            height: 35px !important;
+            object-fit: cover;
+            object-position: center;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+    </style>
 </head>
 
 <body class="hold-transition layout-fixed">
@@ -42,12 +55,12 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{ asset('AdminLTE/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
+                        <img src="{{ Auth::user()->profile_photo_url ?? asset('AdminLTE/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">{{ Auth::user()->name ?? 'Admin' }}</a>
                     </div>
-                </div> <!-- Sidebar Menu -->
+                </div><!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Dashboard -->
@@ -88,21 +101,36 @@
                                 <i class="nav-icon fas fa-file-alt"></i>
                                 <p>Data Dokumen</p>
                             </a>
-                        </li>
-
-                        <!-- Data Pembayaran -->
+                        </li> <!-- Data Pembayaran -->
                         <li class="nav-item">
                             <a href="{{ route('admin.pembayaran.index') }}" class="nav-link {{ Request::is('admin/pembayaran*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-money-bill-wave"></i>
                                 <p>Data Pembayaran</p>
                             </a>
-                        </li> <!-- Pengaturan -->
+                        </li>
+
+                        <!-- Kritik & Saran -->
+                        <li class="nav-item">
+                            <a href="{{ route('admin.contact.index') }}" class="nav-link {{ Request::is('admin/contact*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-comments"></i>
+                                <p>
+                                    Kritik & Saran
+                                    @if(App\Models\Contact::where('status', 'unread')->count() > 0)
+                                    <span class="badge badge-warning right">{{ App\Models\Contact::where('status', 'unread')->count() }}</span>
+                                    @endif
+                                </p>
+                            </a>
+                        </li>
+
+
+                        <!-- Pengaturan -->
                         <li class="nav-item">
                             <a href="{{ route('admin.settings') }}" class="nav-link {{ Request::is('admin/settings*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-cogs"></i>
                                 <p>Pengaturan</p>
                             </a>
                         </li>
+
                     </ul>
                 </nav>
                 </ul>

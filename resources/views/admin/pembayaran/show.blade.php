@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Pembayaran')
+@section('title', 'Detail Pembayaran - ')
 @section('page-title', 'Detail Pembayaran')
 
 @section('breadcrumb')
@@ -80,9 +80,9 @@
                                 <td>
                                     <strong>{{ $pembayaran->user->name }}</strong><br>
                                     <small class="text-muted">{{ $pembayaran->user->email }}</small>
-                                    @if($pembayaran->user->identitas)
+                                    <!-- @if($pembayaran->user->identitas)
                                     <br><small class="badge badge-info">{{ $pembayaran->user->identitas->nama_lengkap }}</small>
-                                    @endif
+                                    @endif -->
                                 </td>
                             </tr>
                             <tr>

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah User')
+@section('title', 'Tambah User - ')
 
 @section('content')
 <div class="content-header">

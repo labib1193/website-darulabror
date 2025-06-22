@@ -23,8 +23,12 @@
 
 .users-list > li > img {
     border-radius: 50%;
-    max-width: 100%;
-    height: auto;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    object-position: center;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .users-list .users-list-name,
@@ -88,4 +92,32 @@
 .timeline > div > .timeline-item > .timeline-body,
 .timeline > div > .timeline-item > .timeline-footer {
     padding: 10px 0 0 0;
+}
+
+/* Sidebar user profile image */
+.user-panel .image img {
+    width: 35px !important;
+    height: 35px !important;
+    object-fit: cover;
+    object-position: center;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* Responsive user list images */
+@media (max-width: 767px) {
+    .users-list > li {
+        width: 50%;
+    }
+    
+    .users-list > li > img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 575px) {
+    .users-list > li {
+        width: 100%;
+    }
 }
