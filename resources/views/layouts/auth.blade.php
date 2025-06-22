@@ -9,6 +9,8 @@
     <meta http-equiv="Expires" content="0">
     <title>@yield('title', 'Login Santri - Darul Abror')</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/global/logo.png') }}">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->

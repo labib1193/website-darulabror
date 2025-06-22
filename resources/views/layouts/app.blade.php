@@ -7,6 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Pondok Pesantren Darul Abror') </title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/global/logo.png') }}">
     <!-- CSS untuk Website Publik -->
     <link rel="stylesheet" href="{{ asset('assets/css/public/main.css') }}">
     <!-- Font Awesome Icons -->
