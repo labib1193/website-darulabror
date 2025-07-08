@@ -21,6 +21,29 @@
 
 <section class="content">
     <div class="container-fluid">
+
+        <!-- Success Messages -->
+        @if(session('success'))
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h5><i class="icon fas fa-check"></i> Berhasil!</h5>
+            {{ session('success') }}
+        </div>
+        @endif
+
+        <!-- Error Messages -->
+        @if($errors->any())
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h5><i class="icon fas fa-ban"></i> Error!</h5>
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
         <div class="row">
             <div class="col-md-6">
                 <!-- Profile Settings -->
@@ -28,7 +51,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Profil Admin</h3>
                     </div>
-                    <form action="#" method="POST">
+                    <form action="{{ route('admin.settings.profile') }}" method="POST">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
@@ -57,7 +80,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Ubah Password</h3>
                     </div>
-                    <form action="#" method="POST">
+                    <form action="{{ route('admin.settings.password') }}" method="POST">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
@@ -65,12 +88,12 @@
                                 <input type="password" class="form-control" id="current_password" name="current_password" required>
                             </div>
                             <div class="form-group">
-                                <label for="new_password">Password Baru</label>
-                                <input type="password" class="form-control" id="new_password" name="new_password" required>
+                                <label for="password">Password Baru</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
                             </div>
                             <div class="form-group">
-                                <label for="new_password_confirmation">Konfirmasi Password Baru</label>
-                                <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" required>
+                                <label for="password_confirmation">Konfirmasi Password Baru</label>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                             </div>
                         </div>
                         <div class="card-footer">
@@ -81,10 +104,10 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                <!-- System Information -->
-                <div class="card card-info">
+        <!-- <div class="row">
+            <div class="col-12"> -->
+        <!-- System Information -->
+        <!-- <div class="card card-info">
                     <div class="card-header">
                         <h3 class="card-title">Informasi Sistem</h3>
                     </div>
@@ -110,7 +133,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </section>
 @endsection

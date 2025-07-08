@@ -26,7 +26,7 @@
                 <a href="{{ route('admin.login') }}" class="h1"><b>Admin</b> Darul Abror</a>
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Masuk untuk memulai sesi admin</p>
+                <p class="login-box-msg">Masuk untuk membuka Dashboard Admin</p>
 
                 @if (session('success'))
                 <div class="alert alert-success alert-dismissible">
@@ -94,13 +94,13 @@
                 </p>
 
                 <!-- Demo credentials -->
-                <div class="mt-4">
-                    <div class="callout callout-info">
+                <!-- <div class="mt-4"> -->
+                <!-- <div class="callout callout-info">
                         <h5><i class="fas fa-info"></i> Akun Demo:</h5>
                         <p class="mb-1"><strong>Admin:</strong> admin@darulabror.com / admin123</p>
                         <p class="mb-0"><strong>Super Admin:</strong> superadmin@darulabror.com / superadmin123</p>
                     </div>
-                </div>
+                </div> -->
             </div>
             <!-- /.card-body -->
         </div>

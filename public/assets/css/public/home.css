@@ -12,10 +12,8 @@
 .home .carousel {
     position: relative;
     width: 100%;
-    height: 100%; /* Ubah sesuai kebutuhan */
+    height: 100%; 
     object-fit: fill;
-    padding-top: 0 !important;
-    margin-top: 0 !important;
 }
 
 /* ================================
