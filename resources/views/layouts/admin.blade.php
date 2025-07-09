@@ -214,14 +214,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- jQuery -->
-    <script src="{{ secure_asset('AdminLTE/plugins/jquery/jquery.min.js') }}"></script>
+    <!-- <script src="{{ secure_asset('AdminLTE/plugins/jquery/jquery.min.js') }}"></script> -->
     <!-- jQuery UI 1.11.4 -->
     <script src="{{ secure_asset('AdminLTE/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
         $.widget.bridge('uibutton', $.ui.button)
-    </script> <!-- Bootstrap 4 -->
-    <script src="{{ secure_asset('AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    </script>
+    <!-- Bootstrap 4 -->
+    <!-- <script src="{{ secure_asset('AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> -->
+
     <!-- DataTables -->
     <script src="{{ secure_asset('AdminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ secure_asset('AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
