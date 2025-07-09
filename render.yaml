@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: laravel-app
+    env: docker
+    plan: free
+    region: singapore
+    dockerfilePath: Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: base64:xxx # akan digenerate nanti
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: yamabiko.proxy.rlwy.net
+      - key: DB_PORT
+        value: 29640
+      - key: DB_DATABASE
+        value: railway
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        value: cMLHsnDHEHrNsmjPrKsFKSaBJmkBEhXJ
