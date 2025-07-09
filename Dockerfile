@@ -33,5 +33,9 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+RUN php artisan storage:link
+RUN chmod -R 775 storage bootstrap/cache
+
+
 EXPOSE 80
 CMD ["apache2-foreground"]
