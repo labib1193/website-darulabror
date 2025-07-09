@@ -43,6 +43,12 @@
     <script src="{{ secure_asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ secure_asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ secure_asset('AdminLTE/dist/js/adminlte.min.js') }}"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap Bundle CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <script>
 
