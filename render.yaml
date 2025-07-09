@@ -6,12 +6,12 @@ services:
     region: singapore
     dockerfilePath: Dockerfile
     buildCommand: ""
-    startCommand: ""
+    startCommand: "apache2-foreground"
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_KEY
-        value: base64:xxx # akan digenerate nanti
+        value: base64:xxx
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
