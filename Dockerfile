@@ -8,9 +8,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libpng-dev \
+    libjpeg-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo_mysql zip
+    && docker-php-ext-install pdo_mysql zip gd mbstring
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -34,7 +35,7 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 RUN composer install --no-dev --optimize-autoloader
 
 RUN php artisan storage:link
-RUN chmod -R 775 storage bootstrap/cache public/storage
+RUN chmod -R 775 storage bootstrap/cache public/storage /tmp
 
 
 EXPOSE 80
