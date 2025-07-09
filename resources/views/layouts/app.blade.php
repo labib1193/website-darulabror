@@ -8,13 +8,13 @@
     <title>@yield('title', 'Pondok Pesantren Darul Abror') </title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/global/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ secure_asset('assets/images/global/logo.png') }}">
     <!-- CSS untuk Website Publik -->
-    <link rel="stylesheet" href="{{ asset('assets/css/public/main.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('assets/css/public/main.css') }}">
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('AdminLTE/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('AdminLTE/dist/css/adminlte.min.css') }}">
 
     @stack('styles')
 </head>
@@ -40,9 +40,9 @@
     </div>
 
     <!-- Script Bootstrap Js -->
-    <script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('AdminLTE/dist/js/adminlte.min.js') }}"></script>
+    <script src="{{ secure_asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ secure_asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ secure_asset('AdminLTE/dist/js/adminlte.min.js') }}"></script>
 
     <script>
 
