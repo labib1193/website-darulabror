@@ -219,11 +219,11 @@
             </div>
             <div class="card-body p-0">
                 <ul class="users-list clearfix"> @forelse($recentUsers ?? [] as $user) <li>
-                        <img src="{{ $user->profile_photo_url ?? asset('AdminLTE/dist/img/user2-160x160.jpg') }}"
+                        <img src="{{ $user->profile_photo_url ?? secure_asset('AdminLTE/dist/img/user2-160x160.jpg') }}"
                             alt="{{ $user->name }}"
                             title="{{ $user->name }}"
                             class="user-profile-img"
-                            data-fallback="{{ asset('AdminLTE/dist/img/user2-160x160.jpg') }}"
+                            data-fallback="{{ secure_asset('AdminLTE/dist/img/user2-160x160.jpg') }}"
                             loading="lazy">
                         <a class="users-list-name" href="#" title="{{ $user->name }}">{{ Str::limit($user->name, 12) }}</a>
                         <span class="users-list-date">{{ $user->created_at->format('d M') }}</span>

@@ -139,7 +139,7 @@
                                         @if($user->profile_photo)
                                         <div class="mt-2">
                                             <small class="text-info">Foto saat ini:
-                                                <a href="{{ asset('storage/' . $user->profile_photo) }}" target="_blank">
+                                                <a href="{{ secure_asset('storage/' . $user->profile_photo) }}" target="_blank">
                                                     Lihat foto
                                                 </a>
                                             </small>
@@ -155,7 +155,7 @@
                                     <div class="form-group">
                                         <label>Foto Profil Saat Ini</label>
                                         <div class="text-center">
-                                            <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Foto Profil" class="img-thumbnail" style="max-height: 200px;">
+                                            <img src="{{ secure_asset('storage/' . $user->profile_photo) }}" alt="Foto Profil" class="img-thumbnail" style="max-height: 200px;">
                                         </div>
                                     </div>
                                     @endif
