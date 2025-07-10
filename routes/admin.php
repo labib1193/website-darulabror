@@ -42,8 +42,16 @@ Route::middleware('admin')->group(function () {
     ]);    // Data Master - Dokumen
     Route::resource('dokumen', DokumenController::class)->parameters([
         'dokumen' => 'dokumen'
-    ]);
-    Route::get('dokumen/{dokumen}/download/{field}', [DokumenController::class, 'download'])->name('dokumen.download');    // Pembayaran
+    ])->middleware('dokumen.user')->only(['show', 'edit', 'update', 'destroy']);
+
+    // Route without middleware for index and create
+    Route::get('dokumen', [DokumenController::class, 'index'])->name('dokumen.index');
+    Route::get('dokumen/create', [DokumenController::class, 'create'])->name('dokumen.create');
+    Route::post('dokumen', [DokumenController::class, 'store'])->name('dokumen.store');
+
+    Route::get('dokumen/{dokumen}/download/{field}', [DokumenController::class, 'download'])
+        ->name('dokumen.download')
+        ->middleware('dokumen.user');    // Pembayaran
     Route::resource('pembayaran', PembayaranController::class);
     Route::post('pembayaran/{pembayaran}/approve', [PembayaranController::class, 'approve'])->name('pembayaran.approve');
     Route::post('pembayaran/{pembayaran}/reject', [PembayaranController::class, 'reject'])->name('pembayaran.reject');

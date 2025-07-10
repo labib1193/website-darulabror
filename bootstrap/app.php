@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'dokumen.user' => \App\Http\Middleware\EnsureDokumenUserExists::class,
         ]);
 
         // Override default auth middleware with our custom one

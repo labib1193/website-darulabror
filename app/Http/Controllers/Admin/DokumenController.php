@@ -58,7 +58,36 @@ class DokumenController extends Controller
                     $originalName = $file->getClientOriginalName();
                     $publicId = 'dokumen/' . $field . '_' . $request->user_id . '_' . time();
 
-                    $cloudinary = new \Cloudinary\Cloudinary();
+                    // Use Cloudinary from config or directly with environment variables
+                    $cloudinary = null;
+
+                    // Try to use the config first, then environment variables
+                    try {
+                        $cloudinary = Cloudinary::getCloudinary();
+                    } catch (\Exception $configException) {
+                        Log::warning('Cloudinary config failed, trying direct instantiation', [
+                            'error' => $configException->getMessage()
+                        ]);
+
+                        // Try direct instantiation with env variables
+                        $cloudUrl = env('CLOUDINARY_URL');
+                        if ($cloudUrl) {
+                            $cloudinary = new \Cloudinary\Cloudinary($cloudUrl);
+                        } else {
+                            $cloudinary = new \Cloudinary\Cloudinary([
+                                'cloud' => [
+                                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                                    'api_key' => env('CLOUDINARY_KEY'),
+                                    'api_secret' => env('CLOUDINARY_SECRET')
+                                ]
+                            ]);
+                        }
+                    }
+
+                    if (!$cloudinary) {
+                        throw new \Exception('Failed to initialize Cloudinary client');
+                    }
+
                     $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                         'public_id' => $publicId,
                         'folder' => 'dokumen',
@@ -76,10 +105,11 @@ class DokumenController extends Controller
                     Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage(), [
                         'user_id' => $request->user_id,
                         'field' => $field,
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
                     ]);
                     return redirect()->back()
-                        ->with('error', 'Gagal mengupload ' . $field . '. Silakan coba lagi.')
+                        ->with('error', 'Gagal mengupload ' . $field . '. Pastikan konfigurasi Cloudinary sudah benar. Error: ' . $e->getMessage())
                         ->withInput();
                 }
             }
@@ -92,7 +122,35 @@ class DokumenController extends Controller
 
     public function show(Dokumen $dokumen)
     {
-        return view('admin.dokumen.show', compact('dokumen'));
+        try {
+            // Validate Cloudinary configuration
+            if (!$this->isCloudinaryConfigured()) {
+                Log::warning('Cloudinary is not properly configured');
+                return redirect()->route('admin.dokumen.index')
+                    ->with('error', 'Cloudinary tidak dikonfigurasi dengan benar. Silakan hubungi administrator.');
+            }
+
+            // Load user relationship with error handling
+            $dokumen->load('user');
+
+            // Check if user still exists
+            if (!$dokumen->user) {
+                Log::error('Dokumen found but user is missing', ['dokumen_id' => $dokumen->id]);
+                return redirect()->route('admin.dokumen.index')
+                    ->with('error', 'Data user tidak ditemukan untuk dokumen ini.');
+            }
+
+            return view('admin.dokumen.show', compact('dokumen'));
+        } catch (\Exception $e) {
+            Log::error('Error displaying dokumen details', [
+                'dokumen_id' => $dokumen->id ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->route('admin.dokumen.index')
+                ->with('error', 'Terjadi kesalahan saat menampilkan detail dokumen. Silakan coba lagi.');
+        }
     }
 
     public function edit(Dokumen $dokumen)
@@ -130,7 +188,36 @@ class DokumenController extends Controller
                     $originalName = $file->getClientOriginalName();
                     $publicId = 'dokumen/' . $field . '_' . $dokumen->user_id . '_' . time();
 
-                    $cloudinary = new \Cloudinary\Cloudinary();
+                    // Use Cloudinary from config or directly with environment variables
+                    $cloudinary = null;
+
+                    // Try to use the config first, then environment variables
+                    try {
+                        $cloudinary = Cloudinary::getCloudinary();
+                    } catch (\Exception $configException) {
+                        Log::warning('Cloudinary config failed, trying direct instantiation', [
+                            'error' => $configException->getMessage()
+                        ]);
+
+                        // Try direct instantiation with env variables
+                        $cloudUrl = env('CLOUDINARY_URL');
+                        if ($cloudUrl) {
+                            $cloudinary = new \Cloudinary\Cloudinary($cloudUrl);
+                        } else {
+                            $cloudinary = new \Cloudinary\Cloudinary([
+                                'cloud' => [
+                                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                                    'api_key' => env('CLOUDINARY_KEY'),
+                                    'api_secret' => env('CLOUDINARY_SECRET')
+                                ]
+                            ]);
+                        }
+                    }
+
+                    if (!$cloudinary) {
+                        throw new \Exception('Failed to initialize Cloudinary client');
+                    }
+
                     $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                         'public_id' => $publicId,
                         'folder' => 'dokumen',
@@ -148,10 +235,11 @@ class DokumenController extends Controller
                     Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage(), [
                         'user_id' => $dokumen->user_id,
                         'field' => $field,
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
                     ]);
                     return redirect()->back()
-                        ->with('error', 'Gagal mengupload ' . $field . '. Silakan coba lagi.')
+                        ->with('error', 'Gagal mengupload ' . $field . '. Pastikan konfigurasi Cloudinary sudah benar. Error: ' . $e->getMessage())
                         ->withInput();
                 }
             }
@@ -181,34 +269,49 @@ class DokumenController extends Controller
      */
     public function download(Dokumen $dokumen, $field)
     {
-        $allowedFields = ['foto_ktp', 'foto_ijazah', 'surat_sehat', 'foto_kk', 'pas_foto'];
+        try {
+            $allowedFields = ['foto_ktp', 'foto_ijazah', 'surat_sehat', 'foto_kk', 'pas_foto'];
 
-        if (!in_array($field, $allowedFields)) {
-            return redirect()->back()->with('error', 'Field dokumen tidak valid.');
+            if (!in_array($field, $allowedFields)) {
+                return redirect()->back()->with('error', 'Field dokumen tidak valid.');
+            }
+
+            // Check if user still exists
+            if (!$dokumen->user) {
+                return redirect()->back()->with('error', 'Data user tidak ditemukan.');
+            }
+
+            if (!$dokumen->$field) {
+                return redirect()->back()->with('error', 'File tidak ditemukan.');
+            }
+
+            $filePath = $dokumen->$field;
+
+            // Check if it's a Cloudinary URL
+            if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+                // For Cloudinary URLs, redirect to the URL for download
+                return redirect($filePath);
+            }
+
+            // For local storage files
+            $localPath = storage_path('app/public/' . $filePath);
+
+            if (!file_exists($localPath)) {
+                return redirect()->back()->with('error', 'File tidak ditemukan di server.');
+            }
+
+            $originalName = $dokumen->{$field . '_original'} ?? 'dokumen.' . pathinfo($localPath, PATHINFO_EXTENSION);
+
+            return response()->download($localPath, $originalName);
+        } catch (\Exception $e) {
+            Log::error('Error downloading dokumen file', [
+                'dokumen_id' => $dokumen->id ?? 'unknown',
+                'field' => $field ?? 'unknown',
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh file. Silakan coba lagi.');
         }
-
-        if (!$dokumen->$field) {
-            return redirect()->back()->with('error', 'File tidak ditemukan.');
-        }
-
-        $filePath = $dokumen->$field;
-
-        // Check if it's a Cloudinary URL
-        if (filter_var($filePath, FILTER_VALIDATE_URL)) {
-            // For Cloudinary URLs, redirect to the URL for download
-            return redirect($filePath);
-        }
-
-        // For local storage files
-        $localPath = storage_path('app/public/' . $filePath);
-
-        if (!file_exists($localPath)) {
-            return redirect()->back()->with('error', 'File tidak ditemukan di server.');
-        }
-
-        $originalName = $dokumen->{$field . '_original'} ?? 'dokumen.' . pathinfo($localPath, PATHINFO_EXTENSION);
-
-        return response()->download($localPath, $originalName);
     }
 
     /**
@@ -272,5 +375,38 @@ class DokumenController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Check if Cloudinary is properly configured
+     */
+    private function isCloudinaryConfigured(): bool
+    {
+        try {
+            // Check environment variables directly
+            $cloudName = env('CLOUDINARY_CLOUD_NAME');
+            $apiKey = env('CLOUDINARY_KEY');
+            $apiSecret = env('CLOUDINARY_SECRET');
+            $cloudUrl = env('CLOUDINARY_URL');
+
+            // Must have either individual credentials or cloud URL
+            $hasIndividualCredentials = !empty($cloudName) && !empty($apiKey) && !empty($apiSecret);
+            $hasCloudUrl = !empty($cloudUrl);
+
+            if (!$hasIndividualCredentials && !$hasCloudUrl) {
+                Log::warning('Cloudinary configuration missing', [
+                    'cloud_name' => $cloudName ? 'set' : 'missing',
+                    'api_key' => $apiKey ? 'set' : 'missing',
+                    'api_secret' => $apiSecret ? 'set' : 'missing',
+                    'cloud_url' => $cloudUrl ? 'set' : 'missing'
+                ]);
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Failed to check Cloudinary configuration: ' . $e->getMessage());
+            return false;
+        }
     }
 }

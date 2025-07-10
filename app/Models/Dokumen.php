@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class Dokumen extends Model
 {
@@ -130,23 +131,33 @@ class Dokumen extends Model
      */
     public function getFileUrl($field): ?string
     {
-        $filePath = $this->getAttribute($field);
+        try {
+            $filePath = $this->getAttribute($field);
 
-        if (!$filePath) {
+            if (!$filePath) {
+                return null;
+            }
+
+            // Check if it's a Cloudinary URL (starts with https://res.cloudinary.com)
+            if (str_starts_with($filePath, 'https://res.cloudinary.com')) {
+                return $filePath; // Return Cloudinary URL directly
+            }
+
+            // Legacy: Check local storage (for backward compatibility)
+            if (Storage::disk('public')->exists($filePath)) {
+                return asset('storage/' . $filePath);
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Error getting file URL for field ' . $field, [
+                'dokumen_id' => $this->id ?? 'unknown',
+                'field' => $field,
+                'error' => $e->getMessage()
+            ]);
+
             return null;
         }
-
-        // Check if it's a Cloudinary URL (starts with https://res.cloudinary.com)
-        if (str_starts_with($filePath, 'https://res.cloudinary.com')) {
-            return $filePath; // Return Cloudinary URL directly
-        }
-
-        // Legacy: Check local storage (for backward compatibility)
-        if (Storage::disk('public')->exists($filePath)) {
-            return asset('storage/' . $filePath);
-        }
-
-        return null;
     }
 
     /**
@@ -154,12 +165,22 @@ class Dokumen extends Model
      */
     public function getFormattedFileSize($field): string
     {
-        $size = $this->getAttribute($field . '_size');
-        if (!$size) return '-';
+        try {
+            $size = $this->getAttribute($field . '_size');
+            if (!$size) return '-';
 
-        $units = ['B', 'KB', 'MB', 'GB'];
-        $power = $size > 0 ? floor(log($size, 1024)) : 0;
-        return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
+            $units = ['B', 'KB', 'MB', 'GB'];
+            $power = $size > 0 ? floor(log($size, 1024)) : 0;
+            return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
+        } catch (\Exception $e) {
+            Log::error('Error formatting file size for field ' . $field, [
+                'dokumen_id' => $this->id ?? 'unknown',
+                'field' => $field,
+                'error' => $e->getMessage()
+            ]);
+
+            return '-';
+        }
     }
 
     /**
