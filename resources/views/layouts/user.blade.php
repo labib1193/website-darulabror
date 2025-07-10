@@ -95,8 +95,10 @@
     <!-- AdminLTE App -->
     <script src="{{ secure_asset('AdminLTE/dist/js/adminlte.min.js') }}"></script>
 
+    <script src="{{ secure_asset('AdminLTE/dist/js/adminlte.min.js') }}"></script>
+
     <!-- Custom JS -->
-    <script src="{{ secure_asset('assets/js/user/main.js') }}"></script>
+    <!-- <script src="{{ secure_asset('assets/js/user/main.js') }}"></script> -->
 
 
     <!-- Session Management Script -->
