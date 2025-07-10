@@ -6,7 +6,7 @@
 <div class="home">
 
     <!-- Carousel -->
-    <section id="carouselExampleIndicators" class="carousel slider" data-bs-ride="carousel" data-bs-interval="100">
+    <section id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="3000">
         <ol class="carousel-indicators">
             <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
             <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -14,33 +14,25 @@
         </ol>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="{{ secure_asset('assets/images/public/home/banner1.png') }}" alt="Slide 1">
+                <img src="{{ asset('assets/images/public/home/banner1.png') }}" class="d-block w-100" alt="Slide 1">
             </div>
             <div class="carousel-item">
-                <img src="{{ secure_asset('assets/images/public/home/banner2.png') }}" alt="Slide 2">
+                <img src="{{ asset('assets/images/public/home/banner2.png') }}" class="d-block w-100" alt="Slide 2">
             </div>
             <div class="carousel-item">
-                <img src="{{ secure_asset('assets/images/public/home/banner3.png') }}" alt="Slide 3">
+                <img src="{{ asset('assets/images/public/home/banner3.png') }}" class="d-block w-100" alt="Slide 3">
             </div>
         </div>
-        <!-- <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
-            <span class="carousel-control-custom-icon"><i class="fas fa-chevron-left"></i></span>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="sr-only">Previous</span>
-        </a> -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-            <span class="carousel-control-custom-icon" aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-            <span class="carousel-control-custom-icon" aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-
-        <!-- <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
-            <span class="carousel-control-custom-icon"><i class="fas fa-chevron-right"></i></span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="sr-only">Next</span>
-        </a> -->
+        </a>
     </section>
+
     <!-- /.carousel -->
 
     <!-- Section Pendidikan -->

@@ -2,7 +2,7 @@
     <div class="container">
         <a href="{{ url('/') }}" class="navbar-brand d-flex align-items-center">
             <img
-                src="{{ secure_asset('assets/images/global/logo.png') }}"
+                src="{{ asset('assets/images/global/logo.png') }}"
                 alt="Logo"
                 class="logo brand-image"
                 style="width: 60px; height: 60px;">
