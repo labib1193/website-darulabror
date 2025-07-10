@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PengaturanController extends Controller
 {
@@ -122,22 +123,37 @@ class PengaturanController extends Controller
             $user = Auth::user();
 
             // Delete old profile photo if exists
-            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
+            // if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+            //     Storage::disk('public')->delete($user->profile_photo);
+            // }
 
             // Upload new profile photo
+            // $file = $request->file('foto_profil');
+            // $originalName = $file->getClientOriginalName();
+            // $fileName = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+            // $filePath = $file->storeAs('profile_photos', $fileName, 'public');
             $file = $request->file('foto_profil');
-            $originalName = $file->getClientOriginalName();
-            $fileName = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('profile_photos', $fileName, 'public');
+            $upload = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'profile_photos',
+                'public_id' => 'user_' . $user->id . '_profile',
+                'overwrite' => true,
+            ]);
 
-            // Update user record
+            $secureUrl = $upload->getSecurePath();
+            $originalName = $file->getClientOriginalName();
+
             $user->update([
-                'profile_photo' => $filePath,
+                'profile_photo' => $secureUrl,
                 'profile_photo_original' => $originalName,
                 'profile_photo_uploaded_at' => now(),
             ]);
+
+            // Update user record
+            // $user->update([
+            //     'profile_photo' => $filePath,
+            //     'profile_photo_original' => $originalName,
+            //     'profile_photo_uploaded_at' => now(),
+            // ]);
 
             return redirect()->route('user.pengaturanakun')
                 ->with('success', 'Foto profil berhasil diperbarui.');
