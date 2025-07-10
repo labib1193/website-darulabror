@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->text('profile_photo')->nullable()->after('email'); // Changed to text to store Cloudinary URLs
-            $table->string('profile_photo_original')->nullable()->after('profile_photo');
-            $table->timestamp('profile_photo_uploaded_at')->nullable()->after('profile_photo_original');
+            // Change profile_photo column from string to text to store Cloudinary URLs
+            $table->text('profile_photo')->nullable()->change();
         });
     }
 
@@ -24,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['profile_photo', 'profile_photo_original', 'profile_photo_uploaded_at']);
+            // Revert back to string
+            $table->string('profile_photo')->nullable()->change();
         });
     }
 };

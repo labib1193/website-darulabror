@@ -72,7 +72,7 @@ class Dokumen extends Model
      */
     public function getFotoKtpUrlAttribute(): ?string
     {
-        return $this->foto_ktp ? Storage::url($this->foto_ktp) : null;
+        return $this->getDocumentUrl($this->foto_ktp);
     }
 
     /**
@@ -80,7 +80,7 @@ class Dokumen extends Model
      */
     public function getFotoIjazahUrlAttribute(): ?string
     {
-        return $this->foto_ijazah ? Storage::url($this->foto_ijazah) : null;
+        return $this->getDocumentUrl($this->foto_ijazah);
     }
 
     /**
@@ -88,7 +88,7 @@ class Dokumen extends Model
      */
     public function getSuratSehatUrlAttribute(): ?string
     {
-        return $this->surat_sehat ? Storage::url($this->surat_sehat) : null;
+        return $this->getDocumentUrl($this->surat_sehat);
     }
 
     /**
@@ -96,7 +96,7 @@ class Dokumen extends Model
      */
     public function getFotoKkUrlAttribute(): ?string
     {
-        return $this->foto_kk ? Storage::url($this->foto_kk) : null;
+        return $this->getDocumentUrl($this->foto_kk);
     }
 
     /**
@@ -104,7 +104,25 @@ class Dokumen extends Model
      */
     public function getPasFotoUrlAttribute(): ?string
     {
-        return $this->pas_foto ? Storage::url($this->pas_foto) : null;
+        return $this->getDocumentUrl($this->pas_foto);
+    }
+
+    /**
+     * Get document URL - handles both Cloudinary URLs and local storage paths
+     */
+    private function getDocumentUrl(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        // If it's already a full URL (Cloudinary), return as-is
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        // If it's a local storage path, convert to URL
+        return Storage::url($path);
     }
 
     /**

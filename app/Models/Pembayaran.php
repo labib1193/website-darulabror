@@ -61,12 +61,38 @@ class Pembayaran extends Model
         return 'Rp ' . number_format($this->nominal, 0, ',', '.');
     }
 
+    // Accessor for bukti pembayaran URL - handles both Cloudinary URLs and local storage paths
+    public function getBuktiPembayaranUrlAttribute(): ?string
+    {
+        if (!$this->bukti_pembayaran) {
+            return null;
+        }
+
+        // If it's already a full URL (Cloudinary), return as-is
+        if (filter_var($this->bukti_pembayaran, FILTER_VALIDATE_URL)) {
+            return $this->bukti_pembayaran;
+        }
+
+        // If it's a local storage path, convert to URL
+        return Storage::url($this->bukti_pembayaran);
+    }
+
     // Accessor for file size
     public function getFileSizeAttribute()
     {
-        if ($this->bukti_pembayaran && Storage::exists($this->bukti_pembayaran)) {
-            $bytes = Storage::size($this->bukti_pembayaran);
-            return $this->formatBytes($bytes);
+        // For Cloudinary URLs, we cannot get file size from storage
+        // So we'll rely on the stored file size or return null
+        if ($this->bukti_pembayaran) {
+            // If it's a Cloudinary URL, we can't get size from Storage::size
+            if (filter_var($this->bukti_pembayaran, FILTER_VALIDATE_URL)) {
+                return null; // Could be enhanced to fetch from Cloudinary API if needed
+            }
+
+            // For local storage, get size as before
+            if (Storage::exists($this->bukti_pembayaran)) {
+                $bytes = Storage::size($this->bukti_pembayaran);
+                return $this->formatBytes($bytes);
+            }
         }
         return null;
     }

@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PembayaranController extends Controller
 {
@@ -85,11 +87,29 @@ class PembayaranController extends Controller
                 $deskripsi = $paymentDetails['deskripsi'];
             }
 
-            // Handle file upload
+            // Handle file upload to Cloudinary
             $file = $request->file('bukti_pembayaran');
             $originalName = $file->getClientOriginalName();
-            $fileName = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('pembayaran', $fileName, 'public');
+
+            try {
+                // Upload to Cloudinary
+                $publicId = 'pembayaran/user_' . $user->id . '_bukti_' . time();
+
+                $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                    'public_id' => $publicId,
+                    'folder' => 'pembayaran',
+                    'resource_type' => 'image',
+                    'quality' => 'auto',
+                    'fetch_format' => 'auto'
+                ]);
+
+                $filePath = $uploadResult->getSecurePath();
+            } catch (\Exception $e) {
+                Log::error('Cloudinary upload failed for bukti pembayaran: ' . $e->getMessage());
+                return redirect()->back()
+                    ->with('error', 'Gagal mengupload bukti pembayaran. Silakan coba lagi.')
+                    ->withInput();
+            }
 
             // Create pembayaran record with transaction to ensure unique code
             $pembayaran = DB::transaction(function () use ($request, $user, $jumlahTagihan, $deskripsi, $filePath, $originalName) {
@@ -162,14 +182,27 @@ class PembayaranController extends Controller
     {
         $pembayaran = Pembayaran::where('user_id', Auth::id())->findOrFail($id);
 
-        if (!$pembayaran->bukti_pembayaran || !Storage::disk('public')->exists($pembayaran->bukti_pembayaran)) {
+        if (!$pembayaran->bukti_pembayaran) {
             return redirect()->back()->with('error', 'File tidak ditemukan.');
         }
 
-        $filePath = storage_path('app/public/' . $pembayaran->bukti_pembayaran);
+        $filePath = $pembayaran->bukti_pembayaran;
+
+        // Check if it's a Cloudinary URL
+        if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+            // For Cloudinary URLs, redirect to the URL for download
+            return redirect($filePath);
+        }
+
+        // For local storage files
+        if (!Storage::disk('public')->exists($filePath)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan di server.');
+        }
+
+        $localPath = storage_path('app/public/' . $filePath);
         $fileName = $pembayaran->bukti_pembayaran_original ?: 'bukti_pembayaran.jpg';
 
-        return response()->download($filePath, $fileName);
+        return response()->download($localPath, $fileName);
     }
 
     public function delete($id)
@@ -182,9 +215,9 @@ class PembayaranController extends Controller
                 return redirect()->back()->with('error', 'Tidak dapat menghapus pembayaran yang sudah disetujui.');
             }
 
-            // Delete file if exists
-            if ($pembayaran->bukti_pembayaran && Storage::disk('public')->exists($pembayaran->bukti_pembayaran)) {
-                Storage::disk('public')->delete($pembayaran->bukti_pembayaran);
+            // Delete file from Cloudinary or local storage
+            if ($pembayaran->bukti_pembayaran) {
+                $this->deletePaymentFile($pembayaran->bukti_pembayaran);
             }
 
             $pembayaran->delete();
@@ -194,5 +227,68 @@ class PembayaranController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data pembayaran.');
         }
+    }
+
+    /**
+     * Delete payment file from Cloudinary or local storage
+     */
+    private function deletePaymentFile(?string $filePath): void
+    {
+        if (!$filePath) {
+            return;
+        }
+
+        try {
+            // Check if it's a Cloudinary URL
+            if (filter_var($filePath, FILTER_VALIDATE_URL) && str_contains($filePath, 'cloudinary.com')) {
+                // Extract public_id from Cloudinary URL
+                $publicId = $this->extractPublicIdFromCloudinaryUrl($filePath);
+                if ($publicId) {
+                    Cloudinary::destroy($publicId);
+                }
+            } else {
+                // Delete local storage file
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to delete payment file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Extract public_id from Cloudinary URL
+     */
+    private function extractPublicIdFromCloudinaryUrl(string $url): ?string
+    {
+        try {
+            $parsedUrl = parse_url($url);
+            $pathParts = explode('/', $parsedUrl['path']);
+
+            // Find the index after version (v1234567890)
+            $versionIndex = null;
+            foreach ($pathParts as $index => $part) {
+                if (preg_match('/^v\d+$/', $part)) {
+                    $versionIndex = $index;
+                    break;
+                }
+            }
+
+            if ($versionIndex !== null) {
+                // Get path parts after version
+                $publicIdParts = array_slice($pathParts, $versionIndex + 1);
+                $publicId = implode('/', $publicIdParts);
+
+                // Remove file extension
+                $publicId = preg_replace('/\.[^.]*$/', '', $publicId);
+
+                return $publicId;
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to extract public_id from Cloudinary URL: ' . $e->getMessage());
+        }
+
+        return null;
     }
 }

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class UserController extends Controller
 {
@@ -73,17 +75,27 @@ class UserController extends Controller
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
-            // Ensure directory exists
-            if (!Storage::disk('public')->exists('profile_photos')) {
-                Storage::disk('public')->makeDirectory('profile_photos');
-            }
-
             $file = $request->file('profile_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('profile_photos', $filename, 'public');
-            $userData['profile_photo'] = $path;
-            $userData['profile_photo_original'] = $file->getClientOriginalName();
-            $userData['profile_photo_uploaded_at'] = now();
+            $originalName = $file->getClientOriginalName();
+
+            try {
+                // Upload to Cloudinary
+                $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                    'folder' => 'profile_photos',
+                    'public_id' => 'admin_user_' . time() . '_profile',
+                    'overwrite' => true,
+                    'resource_type' => 'image',
+                ]);
+
+                $userData['profile_photo'] = $uploadResult->getSecurePath();
+                $userData['profile_photo_original'] = $originalName;
+                $userData['profile_photo_uploaded_at'] = now();
+            } catch (\Exception $e) {
+                Log::error('Cloudinary upload failed for profile photo: ' . $e->getMessage());
+                return redirect()->back()
+                    ->with('error', 'Gagal mengupload foto profil. Silakan coba lagi.')
+                    ->withInput();
+            }
         }        // Handle email verification
         if ($request->has('email_verified')) {
             $userData['email_verified_at'] = now();
@@ -178,22 +190,32 @@ class UserController extends Controller
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
-            // Ensure directory exists
-            if (!Storage::disk('public')->exists('profile_photos')) {
-                Storage::disk('public')->makeDirectory('profile_photos');
-            }
-
-            // Delete old photo if exists
-            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
-
             $file = $request->file('profile_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('profile_photos', $filename, 'public');
-            $userData['profile_photo'] = $path;
-            $userData['profile_photo_original'] = $file->getClientOriginalName();
-            $userData['profile_photo_uploaded_at'] = now();
+            $originalName = $file->getClientOriginalName();
+
+            try {
+                // Delete old photo if exists
+                if ($user->profile_photo) {
+                    $this->deleteOldProfilePhoto($user->profile_photo);
+                }
+
+                // Upload to Cloudinary
+                $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                    'folder' => 'profile_photos',
+                    'public_id' => 'admin_user_' . $user->id . '_profile',
+                    'overwrite' => true,
+                    'resource_type' => 'image',
+                ]);
+
+                $userData['profile_photo'] = $uploadResult->getSecurePath();
+                $userData['profile_photo_original'] = $originalName;
+                $userData['profile_photo_uploaded_at'] = now();
+            } catch (\Exception $e) {
+                Log::error('Cloudinary upload failed for profile photo: ' . $e->getMessage());
+                return redirect()->back()
+                    ->with('error', 'Gagal mengupload foto profil. Silakan coba lagi.')
+                    ->withInput();
+            }
         }        // Handle email verification
         if ($request->has('email_verified')) {
             $userData['email_verified_at'] = now();
@@ -226,8 +248,8 @@ class UserController extends Controller
         }
 
         // Delete profile photo if exists
-        if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-            Storage::disk('public')->delete($user->profile_photo);
+        if ($user->profile_photo) {
+            $this->deleteOldProfilePhoto($user->profile_photo);
         }
 
         $user->delete();
@@ -321,5 +343,68 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')
             ->with('success', "{$count} email berhasil diverifikasi secara bulk.");
+    }
+
+    /**
+     * Delete old profile photo from storage or Cloudinary
+     */
+    private function deleteOldProfilePhoto(?string $filePath): void
+    {
+        if (!$filePath) {
+            return;
+        }
+
+        try {
+            // Check if it's a Cloudinary URL
+            if (filter_var($filePath, FILTER_VALIDATE_URL) && str_contains($filePath, 'cloudinary.com')) {
+                // Extract public_id from Cloudinary URL
+                $publicId = $this->extractPublicIdFromCloudinaryUrl($filePath);
+                if ($publicId) {
+                    Cloudinary::destroy($publicId);
+                }
+            } else {
+                // Delete local storage file
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to delete old profile photo: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Extract public_id from Cloudinary URL
+     */
+    private function extractPublicIdFromCloudinaryUrl(string $url): ?string
+    {
+        try {
+            $parsedUrl = parse_url($url);
+            $pathParts = explode('/', $parsedUrl['path']);
+
+            // Find the index after version (v1234567890)
+            $versionIndex = null;
+            foreach ($pathParts as $index => $part) {
+                if (preg_match('/^v\d+$/', $part)) {
+                    $versionIndex = $index;
+                    break;
+                }
+            }
+
+            if ($versionIndex !== null) {
+                // Get path parts after version
+                $publicIdParts = array_slice($pathParts, $versionIndex + 1);
+                $publicId = implode('/', $publicIdParts);
+
+                // Remove file extension
+                $publicId = preg_replace('/\.[^.]*$/', '', $publicId);
+
+                return $publicId;
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to extract public_id from Cloudinary URL: ' . $e->getMessage());
+        }
+
+        return null;
     }
 }

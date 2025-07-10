@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -109,57 +110,45 @@ class PengaturanController extends Controller
 
     public function updateProfilePhoto(Request $request): RedirectResponse
     {
+        // Validasi file upload
         $request->validate([
             'foto_profil' => 'required|image|mimes:jpeg,png,jpg|max:1024',
         ], [
             'foto_profil.required' => 'Foto profil harus dipilih.',
             'foto_profil.image' => 'File harus berupa gambar.',
-            'foto_profil.mimes' => 'Format file harus JPG, PNG.',
+            'foto_profil.mimes' => 'Format file harus JPG, PNG, atau JPEG.',
             'foto_profil.max' => 'Ukuran file maksimal 1MB.',
         ]);
 
         try {
             /** @var User $user */
             $user = Auth::user();
-
-            // Delete old profile photo if exists
-            // if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-            //     Storage::disk('public')->delete($user->profile_photo);
-            // }
-
-            // Upload new profile photo
-            // $file = $request->file('foto_profil');
-            // $originalName = $file->getClientOriginalName();
-            // $fileName = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-            // $filePath = $file->storeAs('profile_photos', $fileName, 'public');
             $file = $request->file('foto_profil');
+            $originalName = $file->getClientOriginalName();
+
+            // Upload ke Cloudinary dengan folder profile_photos dan public_id sesuai user ID
             $upload = Cloudinary::upload($file->getRealPath(), [
                 'folder' => 'profile_photos',
                 'public_id' => 'user_' . $user->id . '_profile',
                 'overwrite' => true,
+                'resource_type' => 'image',
             ]);
 
+            // Ambil secure URL dari hasil upload
             $secureUrl = $upload->getSecurePath();
-            $originalName = $file->getClientOriginalName();
 
+            // Update user record dengan URL Cloudinary
             $user->update([
                 'profile_photo' => $secureUrl,
                 'profile_photo_original' => $originalName,
                 'profile_photo_uploaded_at' => now(),
             ]);
 
-            // Update user record
-            // $user->update([
-            //     'profile_photo' => $filePath,
-            //     'profile_photo_original' => $originalName,
-            //     'profile_photo_uploaded_at' => now(),
-            // ]);
-
-            return redirect()->route('user.pengaturanakun')
+            return redirect()->back()
                 ->with('success', 'Foto profil berhasil diperbarui.');
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat mengupload foto profil.');
+                ->with('error', 'Terjadi kesalahan saat mengupload foto profil: ' . $e->getMessage());
         }
     }
 
@@ -182,8 +171,23 @@ class PengaturanController extends Controller
             }
 
             // Delete profile photo if exists
-            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-                Storage::disk('public')->delete($user->profile_photo);
+            if ($user->profile_photo) {
+                // Check if it's a Cloudinary URL
+                if (str_starts_with($user->profile_photo, 'https://res.cloudinary.com')) {
+                    try {
+                        // Extract public_id from URL for deletion
+                        $publicId = 'profile_photos/user_' . $user->id . '_profile';
+                        Cloudinary::destroy($publicId);
+                    } catch (\Exception $e) {
+                        // Log error but don't stop the deletion process
+                        Log::warning('Failed to delete Cloudinary image: ' . $e->getMessage());
+                    }
+                } else {
+                    // Legacy: Delete from local storage
+                    if (Storage::disk('public')->exists($user->profile_photo)) {
+                        Storage::disk('public')->delete($user->profile_photo);
+                    }
+                }
             }
 
             // Logout and delete user (cascade will delete related data)

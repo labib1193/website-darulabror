@@ -16,7 +16,8 @@
             <div class="info">
                 <a href="#" class="d-block">{{ Auth::check() && Auth::user() ? Auth::user()->name : 'User' }}</a>
             </div>
-        </div><!-- Sidebar Menu -->
+        </div>
+        <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Dashboard -->

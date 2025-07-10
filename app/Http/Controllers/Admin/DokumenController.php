@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Dokumen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class DokumenController extends Controller
 {
@@ -51,18 +53,30 @@ class DokumenController extends Controller
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
 
-                // Generate unique filename
-                $originalName = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $filename = $field . '_' . $request->user_id . '_' . time() . '.' . $extension;
+                try {
+                    // Upload to Cloudinary
+                    $originalName = $file->getClientOriginalName();
+                    $publicId = 'dokumen/' . $field . '_' . $request->user_id . '_' . time();
 
-                // Store file
-                $path = $file->storeAs('dokumen/' . $request->user_id, $filename, 'public');
+                    $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                        'public_id' => $publicId,
+                        'folder' => 'dokumen',
+                        'resource_type' => 'auto',
+                        'quality' => 'auto',
+                        'fetch_format' => 'auto'
+                    ]);
 
-                $data[$field] = $path;
-                $data[$field . '_original'] = $originalName;
-                $data[$field . '_size'] = $file->getSize();
-                $data[$field . '_uploaded_at'] = now();
+                    // Update data with Cloudinary URL
+                    $data[$field] = $uploadResult->getSecurePath();
+                    $data[$field . '_original'] = $originalName;
+                    $data[$field . '_size'] = $file->getSize();
+                    $data[$field . '_uploaded_at'] = now();
+                } catch (\Exception $e) {
+                    Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage());
+                    return redirect()->back()
+                        ->with('error', 'Gagal mengupload ' . $field . '. Silakan coba lagi.')
+                        ->withInput();
+                }
             }
         }
 
@@ -101,23 +115,35 @@ class DokumenController extends Controller
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
 
-                // Delete old file if exists
-                if ($dokumen->$field && Storage::disk('public')->exists($dokumen->$field)) {
-                    Storage::disk('public')->delete($dokumen->$field);
+                try {
+                    // Delete old file if exists
+                    if ($dokumen->$field) {
+                        $this->deleteOldFile($dokumen->$field);
+                    }
+
+                    // Upload to Cloudinary
+                    $originalName = $file->getClientOriginalName();
+                    $publicId = 'dokumen/' . $field . '_' . $dokumen->user_id . '_' . time();
+
+                    $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                        'public_id' => $publicId,
+                        'folder' => 'dokumen',
+                        'resource_type' => 'auto',
+                        'quality' => 'auto',
+                        'fetch_format' => 'auto'
+                    ]);
+
+                    // Update data with Cloudinary URL
+                    $data[$field] = $uploadResult->getSecurePath();
+                    $data[$field . '_original'] = $originalName;
+                    $data[$field . '_size'] = $file->getSize();
+                    $data[$field . '_uploaded_at'] = now();
+                } catch (\Exception $e) {
+                    Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage());
+                    return redirect()->back()
+                        ->with('error', 'Gagal mengupload ' . $field . '. Silakan coba lagi.')
+                        ->withInput();
                 }
-
-                // Generate unique filename
-                $originalName = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $filename = $field . '_' . $dokumen->user_id . '_' . time() . '.' . $extension;
-
-                // Store file
-                $path = $file->storeAs('dokumen/' . $dokumen->user_id, $filename, 'public');
-
-                $data[$field] = $path;
-                $data[$field . '_original'] = $originalName;
-                $data[$field . '_size'] = $file->getSize();
-                $data[$field . '_uploaded_at'] = now();
             }
         }
 
@@ -131,8 +157,8 @@ class DokumenController extends Controller
         $fileFields = ['foto_ktp', 'foto_ijazah', 'surat_sehat', 'foto_kk', 'pas_foto'];
 
         foreach ($fileFields as $field) {
-            if ($dokumen->$field && Storage::disk('public')->exists($dokumen->$field)) {
-                Storage::disk('public')->delete($dokumen->$field);
+            if ($dokumen->$field) {
+                $this->deleteOldFile($dokumen->$field);
             }
         }
 
@@ -155,14 +181,86 @@ class DokumenController extends Controller
             return redirect()->back()->with('error', 'File tidak ditemukan.');
         }
 
-        $filePath = storage_path('app/public/' . $dokumen->$field);
+        $filePath = $dokumen->$field;
 
-        if (!file_exists($filePath)) {
+        // Check if it's a Cloudinary URL
+        if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+            // For Cloudinary URLs, redirect to the URL for download
+            return redirect($filePath);
+        }
+
+        // For local storage files
+        $localPath = storage_path('app/public/' . $filePath);
+
+        if (!file_exists($localPath)) {
             return redirect()->back()->with('error', 'File tidak ditemukan di server.');
         }
 
-        $originalName = $dokumen->{$field . '_original'} ?? 'dokumen.' . pathinfo($filePath, PATHINFO_EXTENSION);
+        $originalName = $dokumen->{$field . '_original'} ?? 'dokumen.' . pathinfo($localPath, PATHINFO_EXTENSION);
 
-        return response()->download($filePath, $originalName);
+        return response()->download($localPath, $originalName);
+    }
+
+    /**
+     * Delete old file from storage or Cloudinary
+     */
+    private function deleteOldFile(?string $filePath): void
+    {
+        if (!$filePath) {
+            return;
+        }
+
+        try {
+            // Check if it's a Cloudinary URL
+            if (filter_var($filePath, FILTER_VALIDATE_URL) && str_contains($filePath, 'cloudinary.com')) {
+                // Extract public_id from Cloudinary URL
+                $publicId = $this->extractPublicIdFromCloudinaryUrl($filePath);
+                if ($publicId) {
+                    Cloudinary::destroy($publicId);
+                }
+            } else {
+                // Delete local storage file
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to delete old file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Extract public_id from Cloudinary URL
+     */
+    private function extractPublicIdFromCloudinaryUrl(string $url): ?string
+    {
+        try {
+            $parsedUrl = parse_url($url);
+            $pathParts = explode('/', $parsedUrl['path']);
+
+            // Find the index after version (v1234567890)
+            $versionIndex = null;
+            foreach ($pathParts as $index => $part) {
+                if (preg_match('/^v\d+$/', $part)) {
+                    $versionIndex = $index;
+                    break;
+                }
+            }
+
+            if ($versionIndex !== null) {
+                // Get path parts after version
+                $publicIdParts = array_slice($pathParts, $versionIndex + 1);
+                $publicId = implode('/', $publicIdParts);
+
+                // Remove file extension
+                $publicId = preg_replace('/\.[^.]*$/', '', $publicId);
+
+                return $publicId;
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to extract public_id from Cloudinary URL: ' . $e->getMessage());
+        }
+
+        return null;
     }
 }

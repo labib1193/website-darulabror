@@ -102,9 +102,16 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getProfilePhotoUrl()
     {
+        // Check if profile_photo contains Cloudinary URL (starts with https://res.cloudinary.com)
+        if ($this->profile_photo && str_starts_with($this->profile_photo, 'https://res.cloudinary.com')) {
+            return $this->profile_photo; // Return Cloudinary URL directly
+        }
+
+        // Legacy: Check local storage (for backward compatibility)
         if ($this->profile_photo && Storage::disk('public')->exists($this->profile_photo)) {
             return asset('storage/' . $this->profile_photo);
         }
+
         return null; // Return null so we can use fallback in views
     }
 
@@ -113,9 +120,16 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getProfilePhotoUrlAttribute()
     {
+        // Check if profile_photo contains Cloudinary URL (starts with https://res.cloudinary.com)
+        if ($this->profile_photo && str_starts_with($this->profile_photo, 'https://res.cloudinary.com')) {
+            return $this->profile_photo; // Return Cloudinary URL directly
+        }
+
+        // Legacy: Check local storage (for backward compatibility)
         if ($this->profile_photo && Storage::disk('public')->exists($this->profile_photo)) {
             return asset('storage/' . $this->profile_photo);
         }
+
         return asset('AdminLTE/dist/img/user2-160x160.jpg'); // Default fallback image
     }
 

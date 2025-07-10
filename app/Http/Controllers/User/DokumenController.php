@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Cloudinary\Cloudinary;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary as CloudinaryFacade;
 
 class DokumenController extends Controller
 {
@@ -73,26 +76,37 @@ class DokumenController extends Controller
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
 
-                // Delete old file if exists
-                if ($dokumen->$field && Storage::exists($dokumen->$field)) {
-                    Storage::delete($dokumen->$field);
+                try {
+                    // Delete old file if exists
+                    if ($dokumen->$field) {
+                        $this->deleteOldFile($dokumen->$field);
+                    }
+
+                    // Upload to Cloudinary
+                    $originalName = $file->getClientOriginalName();
+                    $publicId = 'dokumen/' . $field . '_' . $user->id . '_' . time();
+
+                    $uploadResult = CloudinaryFacade::upload($file->getRealPath(), [
+                        'public_id' => $publicId,
+                        'folder' => 'dokumen',
+                        'resource_type' => 'auto',
+                        'quality' => 'auto',
+                        'fetch_format' => 'auto'
+                    ]);
+
+                    // Update dokumen data with Cloudinary URL
+                    $dokumen->$field = $uploadResult->getSecurePath();
+                    $dokumen->{$field . '_original'} = $originalName;
+                    $dokumen->{$field . '_size'} = $file->getSize();
+                    $dokumen->{$field . '_uploaded_at'} = now();
+
+                    $uploadedFiles[] = $field;
+                } catch (\Exception $e) {
+                    Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage());
+                    return redirect()->back()
+                        ->with('error', 'Gagal mengupload ' . $field . '. Silakan coba lagi.')
+                        ->withInput();
                 }
-
-                // Generate unique filename
-                $originalName = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $filename = $field . '_' . $user->id . '_' . time() . '.' . $extension;
-
-                // Store file
-                $path = $file->storeAs('dokumen/' . $user->id, $filename, 'public');
-
-                // Update dokumen data
-                $dokumen->$field = $path;
-                $dokumen->{$field . '_original'} = $originalName;
-                $dokumen->{$field . '_size'} = $file->getSize();
-                $dokumen->{$field . '_uploaded_at'} = now();
-
-                $uploadedFiles[] = $field;
             }
         }
 
@@ -149,9 +163,9 @@ class DokumenController extends Controller
             ], 404);
         }
 
-        // Delete file from storage
-        if ($dokumen->$field && Storage::disk('public')->exists($dokumen->$field)) {
-            Storage::disk('public')->delete($dokumen->$field);
+        // Delete file from storage or Cloudinary
+        if ($dokumen->$field) {
+            $this->deleteOldFile($dokumen->$field);
         }
 
         // Clear dokumen data
@@ -168,6 +182,69 @@ class DokumenController extends Controller
     }
 
     /**
+     * Delete old file from storage or Cloudinary
+     */
+    private function deleteOldFile(?string $filePath): void
+    {
+        if (!$filePath) {
+            return;
+        }
+
+        try {
+            // Check if it's a Cloudinary URL
+            if (filter_var($filePath, FILTER_VALIDATE_URL) && str_contains($filePath, 'cloudinary.com')) {
+                // Extract public_id from Cloudinary URL
+                $publicId = $this->extractPublicIdFromCloudinaryUrl($filePath);
+                if ($publicId) {
+                    CloudinaryFacade::destroy($publicId);
+                }
+            } else {
+                // Delete local storage file
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to delete old file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Extract public_id from Cloudinary URL
+     */
+    private function extractPublicIdFromCloudinaryUrl(string $url): ?string
+    {
+        try {
+            $parsedUrl = parse_url($url);
+            $pathParts = explode('/', $parsedUrl['path']);
+
+            // Find the index after version (v1234567890)
+            $versionIndex = null;
+            foreach ($pathParts as $index => $part) {
+                if (preg_match('/^v\d+$/', $part)) {
+                    $versionIndex = $index;
+                    break;
+                }
+            }
+
+            if ($versionIndex !== null) {
+                // Get path parts after version
+                $publicIdParts = array_slice($pathParts, $versionIndex + 1);
+                $publicId = implode('/', $publicIdParts);
+
+                // Remove file extension
+                $publicId = preg_replace('/\.[^.]*$/', '', $publicId);
+
+                return $publicId;
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to extract public_id from Cloudinary URL: ' . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
      * Download specific dokumen
      */
     public function download($field)
@@ -179,14 +256,23 @@ class DokumenController extends Controller
             return redirect()->back()->with('error', 'File tidak ditemukan.');
         }
 
-        $filePath = storage_path('app/public/' . $dokumen->$field);
+        $filePath = $dokumen->$field;
 
-        if (!file_exists($filePath)) {
+        // Check if it's a Cloudinary URL
+        if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+            // For Cloudinary URLs, redirect to the URL for download
+            return redirect($filePath);
+        }
+
+        // For local storage files
+        $localPath = storage_path('app/public/' . $filePath);
+
+        if (!file_exists($localPath)) {
             return redirect()->back()->with('error', 'File tidak ditemukan di server.');
         }
 
-        $originalName = $dokumen->{$field . '_original'} ?? 'dokumen.' . pathinfo($filePath, PATHINFO_EXTENSION);
+        $originalName = $dokumen->{$field . '_original'} ?? 'dokumen.' . pathinfo($localPath, PATHINFO_EXTENSION);
 
-        return response()->download($filePath, $originalName);
+        return response()->download($localPath, $originalName);
     }
 }
