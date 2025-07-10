@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="login-logo">
-    <img src="{{ secure_asset('assets/images/global/logo.jpg') }}" alt="Logo Darul Abror" style="max-height: 80px;">
+    <img src="{{ asset('assets/images/global/logo.jpg') }}" alt="Logo Darul Abror" style="max-height: 80px;">
     <br>
     <b>Daftar Santri Baru</b>
 </div>

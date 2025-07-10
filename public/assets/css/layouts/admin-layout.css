@@ -1,164 +1,300 @@
 /* 
- * Admin Layout CSS - Extracted from admin.blade.php
- * Admin Layout without Navbar - Aggressive Reset & Full Screen Layout
+ * Admin Layout CSS - Responsive Design
+ * Fixed Sidebar Layout with Mobile Toggle
  */
 
-/* AGGRESSIVE CSS RESET - Remove all top spacing */
-body,
-html {
-    margin: 0 !important;
-    padding: 0 !important;
-    height: 100vh !important;
-}
-
-.wrapper {
-    margin: 0 !important;
-    padding: 0 !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-}
-
-/* Force content to start from absolute top */
-body.layout-fixed .content-wrapper {
-    position: absolute !important;
-    top: 0 !important;
-    left: 250px !important;
-    right: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-/* Remove any top spacing from content header */
-.content-wrapper .content-header {
-    padding-top: 20px !important;
-    margin-top: 0 !important;
-    padding-bottom: 40px !important;
-}
-
-/* Remove container fluid padding */
-.content-header .container-fluid {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-/* Adjust row spacing */
-.content-header .row {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* Ensure no spacing from body/wrapper */
-body.layout-fixed {
-    padding-top: 0 !important;
-}
-
-.wrapper {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-/* Remove any AdminLTE default navbar spacing */
-body.layout-fixed .main-header {
-    display: none !important;
-    /* Completely hide any navbar remnants */
-}
-
-/* Override any AdminLTE navbar-related margins */
-body.layout-navbar-fixed .content-wrapper,
-body.layout-sm-navbar-fixed .content-wrapper,
-body.layout-md-navbar-fixed .content-wrapper,
-body.layout-lg-navbar-fixed .content-wrapper,
-body.layout-xl-navbar-fixed .content-wrapper {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-/* Sidebar adjustment - stick to very top */
-body.layout-fixed .main-sidebar {
+/* Layout with navbar and sidebar */
+.layout-fixed .main-sidebar {
     position: fixed;
-    top: 0 !important;
+    top: 0;
+    left: 0;
     height: 100vh;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+    overflow: hidden;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
 }
 
-/* Remove brand link top spacing */
+/* Navbar is now fixed at top */
+.layout-fixed .main-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    margin-left: 250px;
+}
+
+/* Content wrapper adjustments */
+.layout-fixed .content-wrapper {
+    margin-left: 250px;
+    margin-top: 57px; /* Height of navbar */
+}
+
+/* Sidebar content styling */
+.layout-fixed .main-sidebar .sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    padding-bottom: 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 767.98px) {
+    /* Navbar full width on mobile */
+    .layout-fixed .main-header {
+        margin-left: 0;
+    }
+
+    /* Content wrapper without sidebar margin */
+    .layout-fixed .content-wrapper {
+        margin-left: 0;
+    }
+
+    /* Sidebar positioning for mobile */
+    .layout-fixed .main-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 250px;
+        z-index: 1040;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* Sidebar visible when open - override any other transforms */
+    .layout-fixed.sidebar-open .main-sidebar,
+    .sidebar-open .layout-fixed .main-sidebar {
+        transform: translateX(0) !important;
+    }
+
+    /* Overlay when sidebar is open */
+    .sidebar-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1039;
+    }
+
+    /* Prevent body scroll when sidebar is open */
+    .sidebar-open {
+        overflow: hidden;
+    }
+
+    /* Ensure sidebar content is visible */
+    .layout-fixed .main-sidebar .sidebar {
+        height: 100vh;
+        overflow-y: auto;
+        background: #343a40;
+    }
+
+    /* Reset any sidebar-mini effects on mobile */
+    .sidebar-mini .main-sidebar {
+        transform: translateX(-100%) !important;
+    }
+
+    .sidebar-mini.sidebar-open .main-sidebar {
+        transform: translateX(0) !important;
+    }
+}
+
+/* Styling untuk brand link */
 .main-sidebar .brand-link {
-    margin-top: 0 !important;
-    padding-top: 10px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Hide preloader completely */
-.preloader {
-    display: none !important;
+/* Navbar styling */
+.main-header.navbar {
+    border-bottom: 1px solid #dee2e6;
 }
 
-/* Ensure h1 title has no top margin */
-.content-header h1 {
-    margin-top: 0 !important;
-    padding-top: 5px !important;
+/* Mobile navbar adjustments */
+@media (max-width: 767.98px) {
+    .navbar-nav .nav-link {
+        padding: 0.5rem 1rem;
+    }
+    
+    .navbar-nav .dropdown-menu {
+        position: absolute;
+        right: 0;
+        left: auto;
+        min-width: 200px;
+    }
 }
 
-/* Content header icons styling */
-.content-header .btn-group .btn {
-    border-radius: 20px !important;
-    margin-right: 5px;
+/* Content header styling */
+.content-header {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
 }
 
-.content-header .dropdown-menu {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Mobile content header adjustments */
+@media (max-width: 767.98px) {
+    .content-header {
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+    }
+    
+    .content-header h1 {
+        font-size: 1.5rem;
+    }
 }
 
-.content-header .badge-pill {
-    font-size: 0.7rem;
+/* Simple user name truncation */
+.user-name-text {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
 }
 
-/* User dropdown styling */
+@media (max-width: 991.98px) {
+    .user-name-text {
+        max-width: 100px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .user-name-text {
+        display: none !important;
+    }
+}
+
+/* Additional mobile fixes */
+@media (max-width: 767.98px) {
+    /* Force sidebar to be visible when open */
+    .sidebar-open .main-sidebar {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+    }
+
+    /* Ensure sidebar has proper styling */
+    .main-sidebar {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Brand link styling */
+    .main-sidebar .brand-link {
+        background-color: #343a40;
+        color: white;
+        display: block;
+        padding: 0.8125rem 1rem;
+    }
+
+    /* Sidebar menu styling */
+    .main-sidebar .nav-sidebar {
+        background-color: #343a40;
+    }
+
+    /* User panel styling */
+    .main-sidebar .user-panel {
+        background-color: #343a40;
+        border-bottom: 1px solid #4b545c;
+    }
+
+    /* Fix for AdminLTE sidebar-mini interference */
+    .sidebar-mini .main-sidebar .nav-link p {
+        display: inline-block !important;
+        margin-left: 0.5rem !important;
+    }
+
+    .sidebar-mini .main-sidebar .brand-text {
+        display: inline-block !important;
+    }
+
+    /* Debug: Force sidebar visibility when open */
+    .sidebar-open .main-sidebar {
+        left: 0 !important;
+        transform: translateX(0) !important;
+        width: 250px !important;
+        height: 100vh !important;
+        background-color: #343a40 !important;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    }
+
+    /* Ensure sidebar content is properly styled */
+    .sidebar-open .main-sidebar .sidebar {
+        background-color: #343a40 !important;
+        height: 100vh !important;
+        overflow-y: auto !important;
+    }
+
+    /* Make sure brand link is visible */
+    .sidebar-open .main-sidebar .brand-link {
+        background-color: #343a40 !important;
+        color: white !important;
+        border-bottom: 1px solid #4b545c !important;
+    }
+
+    /* Navigation links styling */
+    .sidebar-open .main-sidebar .nav-sidebar .nav-link {
+        color: #c2c7d0 !important;
+    }
+
+    .sidebar-open .main-sidebar .nav-sidebar .nav-link.active {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+
+    /* Ultimate override for sidebar visibility */
+    .sidebar-open .main-sidebar {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    /* Override any AdminLTE hiding classes */
+    .sidebar-mini.sidebar-collapse .main-sidebar {
+        transform: translateX(-100%) !important;
+    }
+
+    .sidebar-mini.sidebar-collapse.sidebar-open .main-sidebar {
+        transform: translateX(0) !important;
+    }
+}
+
+/* Footer adjustments */
+.main-footer {
+    margin-left: 250px;
+}
+
+@media (max-width: 767.98px) {
+    .main-footer {
+        margin-left: 0;
+    }
+}
+
+/* Additional styling for dropdowns */
 .btn-group .dropdown-menu {
     position: absolute;
     top: 100%;
     right: 0;
     z-index: 1000;
-    display: none;
-    float: left;
     min-width: 180px;
     padding: 0.5rem 0;
     margin: 0.125rem 0 0;
     font-size: 0.875rem;
-    color: #212529;
-    text-align: left;
-    list-style: none;
     background-color: #fff;
-    background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 0.25rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
 }
 
-.btn-group .dropdown-menu.show {
-    display: block;
-}
-
-.dropdown-menu.dropdown-menu-right {
-    right: 0;
-    left: auto;
-}
-
-/* Fix dropdown item styling */
 .dropdown-menu .dropdown-item {
     display: block;
     width: 100%;
     padding: 0.375rem 1rem;
-    clear: both;
-    font-weight: 400;
     color: #212529;
-    text-align: inherit;
     text-decoration: none;
-    white-space: nowrap;
     background-color: transparent;
     border: 0;
 }
@@ -166,24 +302,11 @@ body.layout-fixed .main-sidebar {
 .dropdown-menu .dropdown-item:hover,
 .dropdown-menu .dropdown-item:focus {
     color: #16181b;
-    text-decoration: none;
     background-color: #f8f9fa;
 }
 
 .dropdown-divider {
     height: 0;
     margin: 0.5rem 0;
-    overflow: hidden;
     border-top: 1px solid #e9ecef;
-}
-
-/* Mobile responsive */
-@media (max-width: 767.98px) {
-    body.layout-fixed .content-wrapper {
-        margin-left: 0;
-    }
-
-    .content-header .btn-group .btn span {
-        display: none !important;
-    }
 }

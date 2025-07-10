@@ -37,13 +37,46 @@
     </style>
 </head>
 
-<body class="hold-transition layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
 
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="{{ asset('AdminLTE/dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo" height="60" width="60">
-        </div> <!-- Navbar removed for testing -->
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+            </ul>
+
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <!-- User Menu -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                        <span class="d-none d-sm-inline ml-1">{{ Str::limit(Auth::user()->name ?? 'Admin', 15) }}</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('admin.settings') }}">
+                            <i class="fas fa-cogs mr-2"></i> Pengaturan
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form method="POST" action="{{ route('admin.logout') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </nav>
 
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4"> <!-- Brand Logo -->
@@ -148,32 +181,8 @@
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        <div class="col-sm-8">
+                        <div class="col-12">
                             <h1 class="m-0">@yield('page-title', 'Dashboard')</h1>
-                        </div>
-                        <div class="col-sm-4">
-                            <!-- User Menu Only -->
-                            <div class="float-right">
-                                <!-- User Menu -->
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="userMenuDropdown">
-                                        <i class="fas fa-user"></i>
-                                        <span class="d-none d-md-inline ml-1">{{ Auth::user()->name ?? 'Admin' }}</span>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenuDropdown">
-                                        <a class="dropdown-item" href="{{ route('admin.settings') }}">
-                                            <i class="fas fa-cogs mr-2"></i> Pengaturan
-                                        </a>
-                                        <div class="dropdown-divider"></div>
-                                        <form method="POST" action="{{ route('admin.logout') }}" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,19 +219,15 @@
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Bootstrap Bundle CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 4 Bundle CDN (matching AdminLTE) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- jQuery -->
-    <!-- <script src="{{ asset('AdminLTE/plugins/jquery/jquery.min.js') }}"></script> -->
     <!-- jQuery UI 1.11.4 -->
     <script src="{{ asset('AdminLTE/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
         $.widget.bridge('uibutton', $.ui.button)
     </script>
-    <!-- Bootstrap 4 -->
-    <!-- <script src="{{ asset('AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> -->
 
     <!-- DataTables -->
     <script src="{{ asset('AdminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
@@ -230,10 +235,65 @@
     <script src="{{ asset('AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <!-- ChartJS -->
-    <script src="{{ asset('AdminLTE/plugins/chart.js/Chart.min.js') }}"></script> <!-- AdminLTE App -->
-    <script src="{{ asset('AdminLTE/dist/js/adminlte.js') }}"></script> <!-- Custom JS -->
+    <script src="{{ asset('AdminLTE/plugins/chart.js/Chart.min.js') }}"></script>
+    <!-- AdminLTE App -->
+    <script src="{{ asset('AdminLTE/dist/js/adminlte.js') }}"></script>
+
+    <!-- Custom JS -->
     <script>
         $(document).ready(function() {
+            // Mobile sidebar toggle function
+            function initMobileSidebar() {
+                if (window.innerWidth <= 768) {
+                    $('body').addClass('sidebar-mini sidebar-collapse');
+
+                    // Remove any existing sidebar-open class
+                    $('body').removeClass('sidebar-open');
+
+                    // Handle pushmenu click for mobile
+                    $('[data-widget="pushmenu"]').off('click.mobile').on('click.mobile', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Toggle sidebar open state
+                        $('body').toggleClass('sidebar-open');
+
+                        // Log for debugging
+                        console.log('Admin sidebar toggle clicked, sidebar-open:', $('body').hasClass('sidebar-open'));
+                    });
+
+                    // Close sidebar when clicking outside on mobile
+                    $(document).off('click.mobile').on('click.mobile', function(e) {
+                        if (window.innerWidth <= 768 && $('body').hasClass('sidebar-open')) {
+                            if (!$(e.target).closest('.main-sidebar, [data-widget="pushmenu"]').length) {
+                                $('body').removeClass('sidebar-open');
+                            }
+                        }
+                    });
+                } else {
+                    // Desktop behavior
+                    $('body').removeClass('sidebar-mini sidebar-collapse sidebar-open');
+
+                    // Remove mobile event handlers
+                    $('[data-widget="pushmenu"]').off('click.mobile');
+                    $(document).off('click.mobile');
+
+                    // Use AdminLTE default behavior for desktop
+                    $('[data-widget="pushmenu"]').off('click.desktop').on('click.desktop', function(e) {
+                        e.preventDefault();
+                        // Let AdminLTE handle desktop sidebar toggle
+                    });
+                }
+            }
+
+            // Initialize on page load
+            initMobileSidebar();
+
+            // Handle window resize
+            $(window).on('resize', function() {
+                initMobileSidebar();
+            });
+
             // Initialize Bootstrap dropdowns
             $('.dropdown-toggle').dropdown();
         });

@@ -11,19 +11,29 @@
                 <!-- Form Kontak -->
                 <div class="col-md-6 mb-4">
                     <h2 class="fw-bold mb-4">Kontak</h2>
-                    <form>
+                    <form class="contact-form" id="contactForm">
+                        @csrf
                         <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Nama" required>
+                            <input type="text" name="nama" placeholder="Nama" required class="form-control">
+                            <div class="invalid-feedback" id="error-nama"></div>
                         </div>
                         <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="E-mail" required>
+                            <input type="email" name="email" placeholder="E-mail" required class="form-control">
+                            <div class="invalid-feedback" id="error-email"></div>
                         </div>
                         <div class="mb-3">
-                            <textarea class="form-control" rows="5" placeholder="Pesan" required></textarea>
+                            <textarea name="pesan" rows="5" placeholder="Pesan" required class="form-control"></textarea>
+                            <div class="invalid-feedback" id="error-pesan"></div>
                         </div>
                         <p class="text-muted small mb-3">*NB anda tidak perlu login untuk mengisi kritik dan saran</p>
-                        <button type="submit" class="btn btn-success px-4">Kirim</button>
+                        <button type="submit" class="btn btn-success px-4" id="submitBtn">
+                            <span class="btn-text">Kirim</span>
+                            <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        </button>
                     </form>
+
+                    <!-- Alert untuk feedback -->
+                    <div id="contactAlert" class="alert d-none mt-3" role="alert"></div>
                 </div>
 
                 <!-- Info Kontak -->
@@ -59,4 +69,96 @@
     </section>
     <!-- Section Kontak -->
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#contactForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // Reset validation states
+            $('.form-control').removeClass('is-invalid');
+            $('.invalid-feedback').text('');
+            $('#contactAlert').addClass('d-none');
+
+            // Show loading state
+            const submitBtn = $('#submitBtn');
+            const btnText = submitBtn.find('.btn-text');
+            const spinner = submitBtn.find('.spinner-border');
+
+            submitBtn.prop('disabled', true);
+            btnText.text('Mengirim...');
+            spinner.removeClass('d-none');
+
+            // Get form data
+            const formData = new FormData(this);
+
+            // Send AJAX request
+            $.ajax({
+                url: '{{ route("contact.store") }}',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        $('#contactAlert')
+                            .removeClass('d-none alert-danger')
+                            .addClass('alert-success')
+                            .text(response.message);
+
+                        // Reset form
+                        $('#contactForm')[0].reset();
+
+                        // Scroll to alert
+                        $('html, body').animate({
+                            scrollTop: $('#contactAlert').offset().top - 100
+                        }, 500);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        // Validation errors
+                        const errors = xhr.responseJSON.errors;
+
+                        // Show field-specific errors
+                        $.each(errors, function(field, messages) {
+                            const input = $('[name="' + field + '"]');
+                            input.addClass('is-invalid');
+                            $('#error-' + field).text(messages[0]);
+                        });
+
+                        // Show general error message
+                        $('#contactAlert')
+                            .removeClass('d-none alert-success')
+                            .addClass('alert-danger')
+                            .text('Mohon periksa kembali data yang Anda masukkan.');
+                    } else {
+                        // General error
+                        $('#contactAlert')
+                            .removeClass('d-none alert-success')
+                            .addClass('alert-danger')
+                            .text('Terjadi kesalahan saat mengirim pesan. Silakan coba lagi.');
+                    }
+
+                    // Scroll to alert
+                    $('html, body').animate({
+                        scrollTop: $('#contactAlert').offset().top - 100
+                    }, 500);
+                },
+                complete: function() {
+                    // Reset loading state
+                    submitBtn.prop('disabled', false);
+                    btnText.text('Kirim');
+                    spinner.addClass('d-none');
+                }
+            });
+        });
+    });
+</script>
+@endpush
 @endsection
