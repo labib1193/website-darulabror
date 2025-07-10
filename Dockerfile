@@ -1,7 +1,6 @@
-# Gunakan image PHP + Apache + Composer
 FROM php:8.2-apache
 
-# Install ekstensi PHP yang dibutuhkan Laravel
+# Install ekstensi PHP
 RUN apt-get update && apt-get install -y \
     git \
     zip \
@@ -16,27 +15,37 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Salin semua file Laravel ke /var/www/html
-COPY . /var/www/html
-
-# Pindahkan index.php ke public/
+# Set working directory
 WORKDIR /var/www/html
 
-# Berikan permission
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Copy project files
+COPY . .
 
-# Aktifkan mod_rewrite
-RUN a2enmod rewrite
+# Copy .env jika belum ada (hindari error saat artisan jalan)
+RUN cp .env.example .env
 
-# Konfigurasi Apache agar pakai public sebagai root
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+# Generate key agar artisan bisa jalan tanpa error
+RUN composer install --no-dev --optimize-autoloader || true
+RUN php artisan key:generate || true
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Hapus cache & optimize agar build clean
+RUN php artisan config:clear || true
+RUN php artisan route:clear || true
+RUN php artisan view:clear || true
+RUN php artisan optimize || true
 
-RUN php artisan storage:link
+# Buat symbolic link ke storage
+RUN php artisan storage:link || true
+
+# Atur permission
+RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache public/storage /tmp
 
+# Aktifkan mod_rewrite Apache
+RUN a2enmod rewrite
+
+# Set folder public sebagai root Apache
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
 CMD ["apache2-foreground"]
