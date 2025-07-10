@@ -117,6 +117,12 @@
                         </a>
                         @endif
                         @else
+                        <div class="text-warning">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                            <p>File tersedia tetapi tidak dapat dimuat</p>
+                        </div>
+                        @endif
+                        @else
                         <div class="text-muted">
                             <i class="fas fa-times-circle fa-3x mb-3"></i>
                             <p>Belum ada file yang diupload</p>
