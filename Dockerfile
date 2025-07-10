@@ -37,6 +37,8 @@ RUN php artisan optimize || true
 # Buat symbolic link ke storage
 RUN php artisan storage:link || true
 
+RUN mkdir -p storage/app public/storage bootstrap/cache
+
 # Atur permission
 RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache public/storage /tmp
