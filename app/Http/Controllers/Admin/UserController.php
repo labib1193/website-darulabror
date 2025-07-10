@@ -199,19 +199,24 @@ class UserController extends Controller
                     $this->deleteOldProfilePhoto($user->profile_photo);
                 }
 
-                // Upload to Cloudinary
-                $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                // Upload to Cloudinary menggunakan API yang lebih reliable
+                $cloudinary = new \Cloudinary\Cloudinary();
+                $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                     'folder' => 'profile_photos',
-                    'public_id' => 'admin_user_' . $user->id . '_profile',
+                    'public_id' => 'admin_user_' . $user->id . '_profile_' . time(),
                     'overwrite' => true,
                     'resource_type' => 'image',
                 ]);
 
-                $userData['profile_photo'] = $uploadResult->getSecurePath();
+                $userData['profile_photo'] = $uploadResult['secure_url'];
                 $userData['profile_photo_original'] = $originalName;
                 $userData['profile_photo_uploaded_at'] = now();
             } catch (\Exception $e) {
-                Log::error('Cloudinary upload failed for profile photo: ' . $e->getMessage());
+                Log::error('Cloudinary upload failed for profile photo: ' . $e->getMessage(), [
+                    'user_id' => $user->id,
+                    'file_name' => $originalName,
+                    'error' => $e->getMessage()
+                ]);
                 return redirect()->back()
                     ->with('error', 'Gagal mengupload foto profil. Silakan coba lagi.')
                     ->withInput();

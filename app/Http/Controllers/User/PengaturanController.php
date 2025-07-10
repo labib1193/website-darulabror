@@ -123,19 +123,63 @@ class PengaturanController extends Controller
         try {
             /** @var User $user */
             $user = Auth::user();
-            $file = $request->file('foto_profil');
-            $originalName = $file->getClientOriginalName();
 
-            // Upload ke Cloudinary dengan folder profile_photos dan public_id sesuai user ID
-            $upload = Cloudinary::upload($file->getRealPath(), [
-                'folder' => 'profile_photos',
-                'public_id' => 'user_' . $user->id . '_profile',
-                'overwrite' => true,
-                'resource_type' => 'image',
+            if (!$user) {
+                Log::error('User not found during profile photo upload');
+                return redirect()->back()
+                    ->with('error', 'User tidak ditemukan.');
+            }
+
+            $file = $request->file('foto_profil');
+
+            if (!$file) {
+                Log::error('File not found in request during profile photo upload');
+                return redirect()->back()
+                    ->with('error', 'File tidak ditemukan.');
+            }
+
+            Log::info('Starting profile photo upload', [
+                'user_id' => $user->id,
+                'file_name' => $file->getClientOriginalName(),
+                'file_size' => $file->getSize(),
+                'mime_type' => $file->getMimeType()
             ]);
 
-            // Ambil secure URL dari hasil upload
-            $secureUrl = $upload->getSecurePath();
+            $originalName = $file->getClientOriginalName();
+
+            // Delete old profile photo if exists
+            if ($user->profile_photo) {
+                Log::info('Deleting old profile photo', ['old_photo' => $user->profile_photo]);
+                $this->deleteOldProfilePhoto($user->profile_photo);
+            }
+
+            // Upload ke Cloudinary dengan folder profile_photos dan public_id sesuai user ID
+            Log::info('Attempting Cloudinary upload');
+
+            try {
+                $cloudinary = new \Cloudinary\Cloudinary();
+                $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
+                    'folder' => 'profile_photos',
+                    'public_id' => 'user_' . $user->id . '_profile_' . time(),
+                    'overwrite' => true,
+                    'resource_type' => 'image',
+                    'quality' => 'auto',
+                    'fetch_format' => 'auto'
+                ]);
+
+                Log::info('Cloudinary upload successful', ['upload_result' => $uploadResult]);
+
+                $secureUrl = $uploadResult['secure_url'];
+            } catch (\Exception $e) {
+                Log::error('Cloudinary upload exception: ' . $e->getMessage(), [
+                    'user_id' => $user->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'error' => $e->getMessage()
+                ]);
+                throw new \Exception('Upload failed: ' . $e->getMessage());
+            }
+
+            Log::info('Secure URL obtained', ['secure_url' => $secureUrl]);
 
             // Update user record dengan URL Cloudinary
             $user->update([
@@ -144,11 +188,15 @@ class PengaturanController extends Controller
                 'profile_photo_uploaded_at' => now(),
             ]);
 
+            Log::info('Profile photo updated successfully', ['user_id' => $user->id]);
+
             return redirect()->back()
                 ->with('success', 'Foto profil berhasil diperbarui.');
         } catch (\Exception $e) {
+            Log::error('Profile photo upload error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat mengupload foto profil: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat mengupload foto profil. Silakan coba lagi.');
         }
     }
 
@@ -200,5 +248,68 @@ class PengaturanController extends Controller
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan saat menghapus akun.');
         }
+    }
+
+    /**
+     * Delete old profile photo from Cloudinary or local storage
+     */
+    private function deleteOldProfilePhoto(?string $filePath): void
+    {
+        if (!$filePath) {
+            return;
+        }
+
+        try {
+            // Check if it's a Cloudinary URL
+            if (filter_var($filePath, FILTER_VALIDATE_URL) && str_contains($filePath, 'cloudinary.com')) {
+                // Extract public_id from Cloudinary URL
+                $publicId = $this->extractPublicIdFromCloudinaryUrl($filePath);
+                if ($publicId) {
+                    Cloudinary::destroy($publicId);
+                }
+            } else {
+                // Delete local storage file
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to delete old profile photo: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Extract public_id from Cloudinary URL
+     */
+    private function extractPublicIdFromCloudinaryUrl(string $url): ?string
+    {
+        try {
+            $parsedUrl = parse_url($url);
+            $pathParts = explode('/', $parsedUrl['path']);
+
+            // Find the index after version (v1234567890)
+            $versionIndex = null;
+            foreach ($pathParts as $index => $part) {
+                if (preg_match('/^v\d+$/', $part)) {
+                    $versionIndex = $index;
+                    break;
+                }
+            }
+
+            if ($versionIndex !== null) {
+                // Get path parts after version
+                $publicIdParts = array_slice($pathParts, $versionIndex + 1);
+                $publicId = implode('/', $publicIdParts);
+
+                // Remove file extension
+                $publicId = preg_replace('/\.[^.]*$/', '', $publicId);
+
+                return $publicId;
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to extract public_id from Cloudinary URL: ' . $e->getMessage());
+        }
+
+        return null;
     }
 }

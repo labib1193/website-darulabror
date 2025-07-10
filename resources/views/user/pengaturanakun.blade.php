@@ -121,13 +121,9 @@
             </div>
             <div class="card-body text-center">
                 <div class="mb-3">
-                    @if($user->getProfilePhotoUrl())
-                    <img src="{{ $user->getProfilePhotoUrl() }}" alt="Foto Profil" class="img-circle"
-                        style="width: 120px; height: 120px; object-fit: cover;">
-                    @else
-                    <img src="{{ asset('AdminLTE/dist/img/user2-160x160.jpg') }}" alt="Foto Profil" class="img-circle"
-                        style="width: 120px; height: 120px;">
-                    @endif
+                    <img src="{{ $user->getProfilePhotoUrl() ?: asset('AdminLTE/dist/img/user2-160x160.jpg') }}"
+                        alt="Foto Profil" class="img-circle profile-preview"
+                        style="width: 120px; height: 120px; object-fit: cover;" id="profile-preview-img">
                 </div>
 
                 @if($user->profile_photo)
@@ -139,7 +135,9 @@
                         @endif
                     </small>
                 </div>
-                @endif <form action="{{ route('user.pengaturanakun.photo') }}" method="POST" enctype="multipart/form-data">
+                @endif
+
+                <form action="{{ route('user.pengaturanakun.photo') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <div class="input-group">
@@ -262,7 +260,8 @@
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
-                    $('.img-circle').attr('src', e.target.result);
+                    // Hanya ubah preview foto di halaman ini, bukan di sidebar
+                    $('#profile-preview-img').attr('src', e.target.result);
                 }
                 reader.readAsDataURL(this.files[0]);
             }

@@ -54,11 +54,12 @@ class DokumenController extends Controller
                 $file = $request->file($field);
 
                 try {
-                    // Upload to Cloudinary
+                    // Upload to Cloudinary menggunakan API yang lebih reliable
                     $originalName = $file->getClientOriginalName();
                     $publicId = 'dokumen/' . $field . '_' . $request->user_id . '_' . time();
 
-                    $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                    $cloudinary = new \Cloudinary\Cloudinary();
+                    $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                         'public_id' => $publicId,
                         'folder' => 'dokumen',
                         'resource_type' => 'auto',
@@ -67,12 +68,16 @@ class DokumenController extends Controller
                     ]);
 
                     // Update data with Cloudinary URL
-                    $data[$field] = $uploadResult->getSecurePath();
+                    $data[$field] = $uploadResult['secure_url'];
                     $data[$field . '_original'] = $originalName;
                     $data[$field . '_size'] = $file->getSize();
                     $data[$field . '_uploaded_at'] = now();
                 } catch (\Exception $e) {
-                    Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage());
+                    Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage(), [
+                        'user_id' => $request->user_id,
+                        'field' => $field,
+                        'error' => $e->getMessage()
+                    ]);
                     return redirect()->back()
                         ->with('error', 'Gagal mengupload ' . $field . '. Silakan coba lagi.')
                         ->withInput();
@@ -121,11 +126,12 @@ class DokumenController extends Controller
                         $this->deleteOldFile($dokumen->$field);
                     }
 
-                    // Upload to Cloudinary
+                    // Upload to Cloudinary menggunakan API yang lebih reliable
                     $originalName = $file->getClientOriginalName();
                     $publicId = 'dokumen/' . $field . '_' . $dokumen->user_id . '_' . time();
 
-                    $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                    $cloudinary = new \Cloudinary\Cloudinary();
+                    $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                         'public_id' => $publicId,
                         'folder' => 'dokumen',
                         'resource_type' => 'auto',
@@ -134,12 +140,16 @@ class DokumenController extends Controller
                     ]);
 
                     // Update data with Cloudinary URL
-                    $data[$field] = $uploadResult->getSecurePath();
+                    $data[$field] = $uploadResult['secure_url'];
                     $data[$field . '_original'] = $originalName;
                     $data[$field . '_size'] = $file->getSize();
                     $data[$field . '_uploaded_at'] = now();
                 } catch (\Exception $e) {
-                    Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage());
+                    Log::error('Cloudinary upload failed for ' . $field . ': ' . $e->getMessage(), [
+                        'user_id' => $dokumen->user_id,
+                        'field' => $field,
+                        'error' => $e->getMessage()
+                    ]);
                     return redirect()->back()
                         ->with('error', 'Gagal mengupload ' . $field . '. Silakan coba lagi.')
                         ->withInput();

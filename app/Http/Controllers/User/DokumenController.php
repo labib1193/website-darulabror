@@ -80,13 +80,13 @@ class DokumenController extends Controller
                     // Delete old file if exists
                     if ($dokumen->$field) {
                         $this->deleteOldFile($dokumen->$field);
-                    }
-
-                    // Upload to Cloudinary
+                    }                    // Upload to Cloudinary
                     $originalName = $file->getClientOriginalName();
                     $publicId = 'dokumen/' . $field . '_' . $user->id . '_' . time();
 
-                    $uploadResult = CloudinaryFacade::upload($file->getRealPath(), [
+                    // Menggunakan Cloudinary API yang lebih reliable
+                    $cloudinary = new \Cloudinary\Cloudinary();
+                    $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                         'public_id' => $publicId,
                         'folder' => 'dokumen',
                         'resource_type' => 'auto',
@@ -95,7 +95,7 @@ class DokumenController extends Controller
                     ]);
 
                     // Update dokumen data with Cloudinary URL
-                    $dokumen->$field = $uploadResult->getSecurePath();
+                    $dokumen->$field = $uploadResult['secure_url'];
                     $dokumen->{$field . '_original'} = $originalName;
                     $dokumen->{$field . '_size'} = $file->getSize();
                     $dokumen->{$field . '_uploaded_at'} = now();

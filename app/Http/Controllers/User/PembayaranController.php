@@ -92,10 +92,11 @@ class PembayaranController extends Controller
             $originalName = $file->getClientOriginalName();
 
             try {
-                // Upload to Cloudinary
+                // Upload to Cloudinary menggunakan API yang lebih reliable
                 $publicId = 'pembayaran/user_' . $user->id . '_bukti_' . time();
 
-                $uploadResult = Cloudinary::upload($file->getRealPath(), [
+                $cloudinary = new \Cloudinary\Cloudinary();
+                $uploadResult = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                     'public_id' => $publicId,
                     'folder' => 'pembayaran',
                     'resource_type' => 'image',
@@ -103,9 +104,13 @@ class PembayaranController extends Controller
                     'fetch_format' => 'auto'
                 ]);
 
-                $filePath = $uploadResult->getSecurePath();
+                $filePath = $uploadResult['secure_url'];
             } catch (\Exception $e) {
-                Log::error('Cloudinary upload failed for bukti pembayaran: ' . $e->getMessage());
+                Log::error('Cloudinary upload failed for bukti pembayaran: ' . $e->getMessage(), [
+                    'user_id' => $user->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'error' => $e->getMessage()
+                ]);
                 return redirect()->back()
                     ->with('error', 'Gagal mengupload bukti pembayaran. Silakan coba lagi.')
                     ->withInput();
