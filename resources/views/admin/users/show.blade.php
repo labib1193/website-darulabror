@@ -30,7 +30,7 @@
                         <div class="text-center">
                             @if($user->profile_photo)
                             <img class="profile-user-img img-fluid img-circle"
-                                src="{{ asset('storage/' . $user->profile_photo) }}"
+                                src="{{ $user->getProfilePhotoUrl() }}"
                                 alt="{{ $user->name }}"
                                 style="width: 150px; height: 150px; object-fit: cover;">
                             @else

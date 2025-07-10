@@ -64,7 +64,7 @@
                                 <td>{{ $users->firstItem() + $index }}</td>
                                 <td class="text-center">
                                     @if($user->profile_photo)
-                                    <img src="{{ asset('storage/' . $user->profile_photo) }}"
+                                    <img src="{{ $user->getProfilePhotoUrl() }}"
                                         alt="{{ $user->name }}"
                                         class="img-circle elevation-2"
                                         width="40" height="40">

@@ -158,10 +158,10 @@
                         <h3 class="card-title">Bukti Pembayaran</h3>
                     </div>
                     <div class="card-body text-center">
-                        @if($pembayaran->bukti_pembayaran) <img src="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}"
+                        @if($pembayaran->bukti_pembayaran) <img src="{{ $pembayaran->getFileUrl('bukti_pembayaran') }}"
                             class="img-fluid mb-2 image-preview" alt="Bukti Pembayaran"
                             style="max-height: 300px; cursor: pointer;"
-                            data-image-src="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}">
+                            data-image-src="{{ $pembayaran->getFileUrl('bukti_pembayaran') }}">
                         <br>
                         <small class="text-muted">
                             {{ $pembayaran->bukti_pembayaran_original ?? 'bukti_pembayaran.jpg' }}
@@ -171,7 +171,7 @@
                         </small>
                         <br><br>
                         <div class="btn-group">
-                            <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}"
+                            <a href="{{ $pembayaran->getFileUrl('bukti_pembayaran') }}"
                                 target="_blank" class="btn btn-info btn-sm">
                                 <i class="fas fa-eye"></i> Lihat
                             </a>

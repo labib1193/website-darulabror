@@ -110,7 +110,7 @@
                                     @if($dokumen && $dokumen->foto_ktp)
                                     <div class="callout callout-success">
                                         <div class="text-center mb-3">
-                                            <img src="{{ Storage::url($dokumen->foto_ktp) }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto KTP">
+                                            <img src="{{ $dokumen->getFileUrl('foto_ktp') }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto KTP">
                                         </div>
                                         <p class="text-center mb-2">
                                             <strong class="text-success">
@@ -169,7 +169,7 @@
                                     @if($dokumen && $dokumen->foto_kk)
                                     <div class="callout callout-success">
                                         <div class="text-center mb-3">
-                                            <img src="{{ Storage::url($dokumen->foto_kk) }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto KK">
+                                            <img src="{{ $dokumen->getFileUrl('foto_kk') }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto KK">
                                         </div>
                                         <p class="text-center mb-2">
                                             <strong class="text-success">
@@ -229,7 +229,7 @@
                                     @if($dokumen && $dokumen->foto_ijazah)
                                     <div class="callout callout-success">
                                         <div class="text-center mb-3">
-                                            <img src="{{ Storage::url($dokumen->foto_ijazah) }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto Ijazah">
+                                            <img src="{{ $dokumen->getFileUrl('foto_ijazah') }}" class="img-thumbnail" style="max-height: 100px;" alt="Foto Ijazah">
                                         </div>
                                         <p class="text-center mb-2">
                                             <strong class="text-success">
@@ -289,7 +289,7 @@
                                     @if($dokumen && $dokumen->pas_foto)
                                     <div class="callout callout-success">
                                         <div class="text-center mb-3">
-                                            <img src="{{ Storage::url($dokumen->pas_foto) }}" class="img-thumbnail" style="max-height: 100px;" alt="Pas Foto">
+                                            <img src="{{ $dokumen->getFileUrl('pas_foto') }}" class="img-thumbnail" style="max-height: 100px;" alt="Pas Foto">
                                         </div>
                                         <p class="text-center mb-2">
                                             <strong class="text-success">
@@ -353,7 +353,7 @@
                                             @if(Str::endsWith($dokumen->surat_sehat, '.pdf'))
                                             <i class="fas fa-file-pdf text-danger" style="font-size: 4rem;"></i>
                                             @else
-                                            <img src="{{ Storage::url($dokumen->surat_sehat) }}" class="img-thumbnail" style="max-height: 100px;" alt="Surat Sehat">
+                                            <img src="{{ $dokumen->getFileUrl('surat_sehat') }}" class="img-thumbnail" style="max-height: 100px;" alt="Surat Sehat">
                                             @endif
                                         </div>
                                         <p class="text-center mb-2">

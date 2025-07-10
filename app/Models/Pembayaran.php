@@ -281,4 +281,28 @@ class Pembayaran extends Model
     {
         return 'Rp ' . number_format($this->jumlah_tagihan, 0, ',', '.');
     }
+
+    /**
+     * Get file URL (Cloudinary or local storage)
+     */
+    public function getFileUrl($field): ?string
+    {
+        $filePath = $this->getAttribute($field);
+
+        if (!$filePath) {
+            return null;
+        }
+
+        // Check if it's a Cloudinary URL (starts with https://res.cloudinary.com)
+        if (str_starts_with($filePath, 'https://res.cloudinary.com')) {
+            return $filePath; // Return Cloudinary URL directly
+        }
+
+        // Legacy: Check local storage (for backward compatibility)
+        if (Storage::disk('public')->exists($filePath)) {
+            return asset('storage/' . $filePath);
+        }
+
+        return null;
+    }
 }

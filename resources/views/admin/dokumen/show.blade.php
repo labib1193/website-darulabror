@@ -4,7 +4,17 @@
 @section('page-title', 'Detail Dokumen')
 
 @section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('                        @if($dokumen->pas_foto)
+                        <img src="{{ $dokumen->getFileUrl('pas_foto') }}" alt="Pas Foto" class="img-fluid mb-3" style="max-height: 200px;">
+        <br>
+        <p class="text-sm">
+            <strong>File:</strong> {{ $dokumen->pas_foto_original }}<br>
+            <strong>Ukuran:</strong> {{ $dokumen->getFormattedFileSize('pas_foto') }}<br>
+            <strong>Upload:</strong> {{ $dokumen->pas_foto_uploaded_at->format('d/m/Y H:i') }}
+        </p> <a href="{{ $dokumen->getFileUrl('pas_foto') }}" target="_blank" class="btn btn-success btn-sm">
+            <i class="fas fa-eye"></i> Lihat
+        </a>board') }}">Dashboard
+    </a></li>
 <li class="breadcrumb-item"><a href="{{ route('admin.dokumen.index') }}">Data Dokumen</a></li>
 <li class="breadcrumb-item active">Detail</li>
 @endsection
@@ -85,13 +95,13 @@
                     </div>
                     <div class="card-body text-center">
                         @if($dokumen->foto_ktp)
-                        <img src="{{ Storage::url($dokumen->foto_ktp) }}" alt="Foto KTP" class="img-fluid mb-3" style="max-height: 200px;">
+                        <img src="{{ $dokumen->getFileUrl('foto_ktp') }}" alt="Foto KTP" class="img-fluid mb-3" style="max-height: 200px;">
                         <br>
                         <p class="text-sm">
                             <strong>File:</strong> {{ $dokumen->foto_ktp_original }}<br>
                             <strong>Ukuran:</strong> {{ $dokumen->getFormattedFileSize('foto_ktp') }}<br>
                             <strong>Upload:</strong> {{ $dokumen->foto_ktp_uploaded_at->format('d/m/Y H:i') }}
-                        </p> <a href="{{ Storage::url($dokumen->foto_ktp) }}" target="_blank" class="btn btn-success btn-sm">
+                        </p> <a href="{{ $dokumen->getFileUrl('foto_ktp') }}" target="_blank" class="btn btn-success btn-sm">
                             <i class="fas fa-eye"></i> Lihat
                         </a>
                         <a href="{{ route('admin.dokumen.download', [$dokumen->id, 'foto_ktp']) }}" class="btn btn-primary btn-sm">
@@ -117,13 +127,13 @@
                     </div>
                     <div class="card-body text-center">
                         @if($dokumen->foto_kk)
-                        <img src="{{ Storage::url($dokumen->foto_kk) }}" alt="Foto KK" class="img-fluid mb-3" style="max-height: 200px;">
+                        <img src="{{ $dokumen->getFileUrl('foto_kk') }}" alt="Foto KK" class="img-fluid mb-3" style="max-height: 200px;">
                         <br>
                         <p class="text-sm">
                             <strong>File:</strong> {{ $dokumen->foto_kk_original }}<br>
                             <strong>Ukuran:</strong> {{ $dokumen->getFormattedFileSize('foto_kk') }}<br>
                             <strong>Upload:</strong> {{ $dokumen->foto_kk_uploaded_at->format('d/m/Y H:i') }}
-                        </p> <a href="{{ Storage::url($dokumen->foto_kk) }}" target="_blank" class="btn btn-success btn-sm">
+                        </p> <a href="{{ $dokumen->getFileUrl('foto_kk') }}" target="_blank" class="btn btn-success btn-sm">
                             <i class="fas fa-eye"></i> Lihat
                         </a>
                         <a href="{{ route('admin.dokumen.download', [$dokumen->id, 'foto_kk']) }}" class="btn btn-primary btn-sm">
@@ -151,13 +161,13 @@
                     </div>
                     <div class="card-body text-center">
                         @if($dokumen->foto_ijazah)
-                        <img src="{{ Storage::url($dokumen->foto_ijazah) }}" alt="Foto Ijazah" class="img-fluid mb-3" style="max-height: 200px;">
+                        <img src="{{ $dokumen->getFileUrl('foto_ijazah') }}" alt="Foto Ijazah" class="img-fluid mb-3" style="max-height: 200px;">
                         <br>
                         <p class="text-sm">
                             <strong>File:</strong> {{ $dokumen->foto_ijazah_original }}<br>
                             <strong>Ukuran:</strong> {{ $dokumen->getFormattedFileSize('foto_ijazah') }}<br>
                             <strong>Upload:</strong> {{ $dokumen->foto_ijazah_uploaded_at->format('d/m/Y H:i') }}
-                        </p> <a href="{{ Storage::url($dokumen->foto_ijazah) }}" target="_blank" class="btn btn-success btn-sm">
+                        </p> <a href="{{ $dokumen->getFileUrl('foto_ijazah') }}" target="_blank" class="btn btn-success btn-sm">
                             <i class="fas fa-eye"></i> Lihat
                         </a>
                         <a href="{{ route('admin.dokumen.download', [$dokumen->id, 'foto_ijazah']) }}" class="btn btn-primary btn-sm">
@@ -183,13 +193,13 @@
                     </div>
                     <div class="card-body text-center">
                         @if($dokumen->pas_foto)
-                        <img src="{{ Storage::url($dokumen->pas_foto) }}" alt="Pas Foto" class="img-fluid mb-3" style="max-height: 200px;">
+                        <img src="{{ $dokumen->getFileUrl('pas_foto') }}" alt="Pas Foto" class="img-fluid mb-3" style="max-height: 200px;">
                         <br>
                         <p class="text-sm">
                             <strong>File:</strong> {{ $dokumen->pas_foto_original }}<br>
                             <strong>Ukuran:</strong> {{ $dokumen->getFormattedFileSize('pas_foto') }}<br>
                             <strong>Upload:</strong> {{ $dokumen->pas_foto_uploaded_at->format('d/m/Y H:i') }}
-                        </p> <a href="{{ Storage::url($dokumen->pas_foto) }}" target="_blank" class="btn btn-success btn-sm">
+                        </p> <a href="{{ $dokumen->getFileUrl('pas_foto') }}" target="_blank" class="btn btn-success btn-sm">
                             <i class="fas fa-eye"></i> Lihat
                         </a>
                         <a href="{{ route('admin.dokumen.download', [$dokumen->id, 'pas_foto']) }}" class="btn btn-primary btn-sm">
@@ -221,7 +231,7 @@
                         $extension = pathinfo($dokumen->surat_sehat, PATHINFO_EXTENSION);
                         @endphp
                         @if(in_array(strtolower($extension), ['jpg', 'jpeg', 'png']))
-                        <img src="{{ Storage::url($dokumen->surat_sehat) }}" alt="Surat Sehat" class="img-fluid mb-3" style="max-height: 200px;">
+                        <img src="{{ $dokumen->getFileUrl('surat_sehat') }}" alt="Surat Sehat" class="img-fluid mb-3" style="max-height: 200px;">
                         @else
                         <div class="text-center mb-3">
                             <i class="fas fa-file-pdf fa-3x text-danger"></i>
@@ -233,7 +243,7 @@
                             <strong>File:</strong> {{ $dokumen->surat_sehat_original }}<br>
                             <strong>Ukuran:</strong> {{ $dokumen->getFormattedFileSize('surat_sehat') }}<br>
                             <strong>Upload:</strong> {{ $dokumen->surat_sehat_uploaded_at->format('d/m/Y H:i') }}
-                        </p> <a href="{{ Storage::url($dokumen->surat_sehat) }}" target="_blank" class="btn btn-success btn-sm">
+                        </p> <a href="{{ $dokumen->getFileUrl('surat_sehat') }}" target="_blank" class="btn btn-success btn-sm">
                             <i class="fas fa-eye"></i> Lihat
                         </a>
                         <a href="{{ route('admin.dokumen.download', [$dokumen->id, 'surat_sehat']) }}" class="btn btn-primary btn-sm">

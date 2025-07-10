@@ -142,7 +142,7 @@
                                         @if($pembayaran->bukti_pembayaran)
                                         <div class="mt-2">
                                             <small class="text-info">Bukti saat ini:
-                                                <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}" target="_blank">
+                                                <a href="{{ $pembayaran->getFileUrl('bukti_pembayaran') }}" target="_blank">
                                                     {{ basename($pembayaran->bukti_pembayaran) }}
                                                 </a>
                                             </small>
@@ -171,7 +171,7 @@
                                     <div class="form-group">
                                         <label>Preview Bukti Saat Ini</label>
                                         <div class="text-center">
-                                            <img src="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
+                                            <img src="{{ $pembayaran->getFileUrl('bukti_pembayaran') }}" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
                                         </div>
                                     </div>
                                     @endif
