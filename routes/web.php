@@ -49,3 +49,8 @@ Route::get('/pendaftaran', function () {
 
 // ✅ Contact form route
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// ✅ Debug routes (only for development)
+if (app()->environment('local', 'development')) {
+    require __DIR__ . '/debug.php';
+}

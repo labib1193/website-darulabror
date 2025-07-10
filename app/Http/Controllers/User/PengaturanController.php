@@ -145,6 +145,16 @@ class PengaturanController extends Controller
                 'mime_type' => $file->getMimeType()
             ]);
 
+            // Check if Cloudinary is properly configured
+            if (empty(config('cloudinary.cloud_url'))) {
+                Log::error('Cloudinary not configured properly', [
+                    'cloud_url' => config('cloudinary.cloud_url'),
+                    'notification_url' => config('cloudinary.notification_url')
+                ]);
+                return redirect()->back()
+                    ->with('error', 'Cloudinary configuration missing. Please contact administrator.');
+            }
+
             $originalName = $file->getClientOriginalName();
 
             // Delete old profile photo if exists

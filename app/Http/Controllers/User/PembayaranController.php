@@ -91,6 +91,23 @@ class PembayaranController extends Controller
             $file = $request->file('bukti_pembayaran');
             $originalName = $file->getClientOriginalName();
 
+            Log::info('Starting bukti pembayaran upload', [
+                'user_id' => $user->id,
+                'file_name' => $originalName,
+                'file_size' => $file->getSize()
+            ]);
+
+            // Check if Cloudinary is properly configured
+            if (empty(config('cloudinary.cloud_url'))) {
+                Log::error('Cloudinary not configured properly', [
+                    'cloud_url' => config('cloudinary.cloud_url'),
+                    'notification_url' => config('cloudinary.notification_url')
+                ]);
+                return redirect()->back()
+                    ->with('error', 'Cloudinary configuration missing. Please contact administrator.')
+                    ->withInput();
+            }
+
             try {
                 // Upload to Cloudinary menggunakan API yang lebih reliable
                 $publicId = 'pembayaran/user_' . $user->id . '_bukti_' . time();
