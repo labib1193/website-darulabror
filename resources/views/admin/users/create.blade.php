@@ -223,7 +223,7 @@
         if (!emailField.value) {
             const name = e.target.value.toLowerCase().replace(/\s+/g, '.');
             if (name) {
-                emailField.value = name + '@example.com';
+                emailField.value = name + '@darulabror.com';
             }
         }
     });
