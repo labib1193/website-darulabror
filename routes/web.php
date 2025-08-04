@@ -28,12 +28,42 @@ Route::get('/profil', function () {
     return view('public.profil');
 })->name('profil');
 
+// Profil sub-pages
+Route::get('/profil/sambutan', function () {
+    return view('public.profil.sambutan');
+})->name('profil.sambutan');
+
+Route::get('/profil/sejarah', function () {
+    return view('public.profil.sejarah');
+})->name('profil.sejarah');
+
+Route::get('/profil/visi-misi', function () {
+    return view('public.profil.visi-misi');
+})->name('profil.visi-misi');
+
+Route::get('/profil/ekstrakurikuler', function () {
+    return view('public.profil.ekstrakurikuler');
+})->name('profil.ekstrakurikuler');
+
 Route::get('/berita', [BeritaController::class, 'index'])->name('berita');
 Route::get('/berita/{slug}', [BeritaController::class, 'show'])->name('berita.detail');
 
 Route::get('/ekstrakurikuler', function () {
     return view('public.ekstrakurikuler');
 })->name('ekstrakurikuler');
+
+// Kurikulum sub-pages
+Route::get('/kurikulum/tpq', function () {
+    return view('public.kurikulum.tpq');
+})->name('kurikulum.tpq');
+
+Route::get('/kurikulum/madrasah-diniyah', function () {
+    return view('public.kurikulum.madrasah-diniyah');
+})->name('kurikulum.madrasah-diniyah');
+
+Route::get('/kurikulum/bq-pi', function () {
+    return view('public.kurikulum.bq-pi');
+})->name('kurikulum.bq-pi');
 
 Route::get('/kontak', function () {
     return view('public.kontak');

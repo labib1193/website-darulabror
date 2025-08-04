@@ -17,14 +17,29 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}">Beranda</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('profil') ? 'active' : '' }}" href="{{ route('profil') }}">Profil</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->routeIs('profil*') ? 'active' : '' }}" href="#" id="profilDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Profil
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="profilDropdown">
+                        <a class="dropdown-item {{ request()->routeIs('profil.sambutan') ? 'active' : '' }}" href="{{ route('profil.sambutan') }}">Sambutan</a>
+                        <a class="dropdown-item {{ request()->routeIs('profil.sejarah') ? 'active' : '' }}" href="{{ route('profil.sejarah') }}">Sejarah</a>
+                        <a class="dropdown-item {{ request()->routeIs('profil.visi-misi') ? 'active' : '' }}" href="{{ route('profil.visi-misi') }}">Visi Misi</a>
+                        <a class="dropdown-item {{ request()->routeIs('profil.ekstrakurikuler') ? 'active' : '' }}" href="{{ route('profil.ekstrakurikuler') }}">Ekstrakurikuler</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('berita') ? 'active' : '' }}" href="{{ route('berita') }}">Berita</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('ekstrakurikuler') ? 'active' : '' }}" href="{{ route('ekstrakurikuler') }}">Ekstrakurikuler</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->routeIs('kurikulum*') ? 'active' : '' }}" href="#" id="kurikulumDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Kurikulum
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="kurikulumDropdown">
+                        <a class="dropdown-item {{ request()->routeIs('kurikulum.tpq') ? 'active' : '' }}" href="{{ route('kurikulum.tpq') }}">TPQ</a>
+                        <a class="dropdown-item {{ request()->routeIs('kurikulum.madrasah-diniyah') ? 'active' : '' }}" href="{{ route('kurikulum.madrasah-diniyah') }}">Madrasah Diniyah</a>
+                        <a class="dropdown-item {{ request()->routeIs('kurikulum.bq-pi') ? 'active' : '' }}" href="{{ route('kurikulum.bq-pi') }}">BQ-PI</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('pendaftaran') ? 'active' : '' }}" href="{{ route('pendaftaran') }}">Pendaftaran</a>

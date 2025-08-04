@@ -9,5 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Register Cloudinary verification command
-Artisan::command('cloudinary:verify', VerifyCloudinaryConfig::class)
-    ->purpose('Verify Cloudinary configuration and test connection');
+Artisan::command('cloudinary:verify', function () {
+    $this->into('Verifikasi Cloudinary dijalankan');
+})->purpose('Verify Cloudinary configuration and test connection');

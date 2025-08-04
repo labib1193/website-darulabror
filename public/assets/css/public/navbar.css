@@ -93,3 +93,46 @@ body {
 .nav-link:hover:not(.active) {
     color: var(--secondary-color) !important;
 }
+
+/* ================================
+   DROPDOWN HOVER STYLES
+   ================================ */
+
+.navbar .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 5px;
+    background-color: white;
+    min-width: 200px;
+}
+
+.navbar .dropdown-item {
+    padding: 10px 20px;
+    color: #333 !important;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.navbar .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: var(--primary-color);
+    color: white !important;
+}
+
+.navbar .dropdown-item.active {
+    background-color: var(--primary-color);
+    color: white !important;
+}
+
+.navbar .dropdown-toggle::after {
+    margin-left: 0.5em;
+}
