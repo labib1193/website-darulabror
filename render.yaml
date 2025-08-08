@@ -1,26 +1,39 @@
 services:
   - type: web
     name: laravel-app
-    env: docker
+    runtime: docker
+    repo: https://github.com/labib1193/website-darulabror.git
+    branch: main
     plan: free
-    region: singapore
     dockerfilePath: Dockerfile
-    buildCommand: ""
-    startCommand: "apache2-foreground"
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_KEY
-        value: base64:Pu/aYab1nNhBwyX95ewu3M+wB8LAbuy1cU+UlTZTh+8=
+        generateValue: true
       - key: DB_CONNECTION
-        value: mysql
+        value: pgsql
       - key: DB_HOST
-        value: yamabiko.proxy.rlwy.net
+        fromDatabase:
+          name: laravel-db
+          property: host
       - key: DB_PORT
-        value: 29640
+        fromDatabase:
+          name: laravel-db
+          property: port
       - key: DB_DATABASE
-        value: railway
+        fromDatabase:
+          name: laravel-db
+          property: database
       - key: DB_USERNAME
-        value: root
+        fromDatabase:
+          name: laravel-db
+          property: user
       - key: DB_PASSWORD
-        value: cMLHsnDHEHrNsmjPrKsFKSaBJmkBEhXJ
+        fromDatabase:
+          name: laravel-db
+          property: password
+
+databases:
+  - name: laravel-db
+    plan: free
