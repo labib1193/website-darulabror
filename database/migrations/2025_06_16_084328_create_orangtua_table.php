@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('no_kk');
             $table->string('nik');
             $table->string('nama_lengkap');
-            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
+            $table->string('jenis_kelamin', 20);
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('pendidikan_terakhir');
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('kecamatan');
             $table->text('alamat_lengkap');
             $table->string('kode_pos');
-            $table->enum('status', ['Orangtua', 'Wali']);
+            $table->string('status', 20)->default('Ayah');
             $table->timestamps();
         });
     }

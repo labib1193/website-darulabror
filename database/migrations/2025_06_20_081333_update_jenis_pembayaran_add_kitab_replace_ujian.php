@@ -5,44 +5,34 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
     public function up(): void
     {
-        // Step 1: Ubah kolom jenis_pembayaran ke VARCHAR sementara
-        DB::statement('ALTER TABLE pembayaran MODIFY COLUMN jenis_pembayaran VARCHAR(50)');
+        // 1) Pastikan tipe kolom jadi string(50)
+        Schema::table('pembayaran', function (Blueprint $table) {
+            $table->string('jenis_pembayaran', 50)->change();
+        });
 
-        // Step 2: Update data yang ada dari 'ujian' ke 'kitab' (opsional - sesuai kebutuhan)
-        // DB::statement("UPDATE pembayaran SET jenis_pembayaran = 'kitab' WHERE jenis_pembayaran = 'ujian'");
+        // 2) Ganti nilai lama 'Ujian' -> 'Kitab'
+        DB::table('pembayaran')
+            ->where('jenis_pembayaran', 'Ujian')
+            ->update(['jenis_pembayaran' => 'Kitab']);
 
-        // Step 3: Ubah kembali ke ENUM dengan nilai yang diperbarui
-        DB::statement("ALTER TABLE pembayaran MODIFY COLUMN jenis_pembayaran ENUM(
-            'pendaftaran',
-            'spp_bulanan',
-            'seragam',
-            'ujian',
-            'kitab',
-            'kegiatan',
-            'lainnya'
-        ) DEFAULT 'pendaftaran'");
+        // 3) (Opsional) Tambah CHECK constraint biar tetap terbatas
+        DB::statement("ALTER TABLE pembayaran DROP CONSTRAINT IF EXISTS chk_jenis_pembayaran");
+        DB::statement("ALTER TABLE pembayaran
+            ADD CONSTRAINT chk_jenis_pembayaran
+            CHECK (jenis_pembayaran IN ('Pendaftaran','SPP','Kitab','Donasi'))");
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Rollback ke ENUM semula tanpa 'kitab'
-        DB::statement("ALTER TABLE pembayaran MODIFY COLUMN jenis_pembayaran ENUM(
-            'pendaftaran',
-            'spp_bulanan',
-            'ujian',
-            'seragam',
-            'kegiatan',
-            'lainnya'
-        ) DEFAULT 'pendaftaran'");
+        // Balikkan perubahan nilai (opsional)
+        DB::table('pembayaran')
+            ->where('jenis_pembayaran', 'Kitab')
+            ->update(['jenis_pembayaran' => 'Ujian']);
+
+        // Hapus CHECK constraint
+        DB::statement("ALTER TABLE pembayaran DROP CONSTRAINT IF EXISTS chk_jenis_pembayaran");
     }
 };
